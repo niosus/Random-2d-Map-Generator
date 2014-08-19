@@ -11,12 +11,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = TestMapGenerator
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -std=c++0x
 
-SOURCES += main.cpp\
+SOURCES += main.cpp \
         mainwindow.cpp \
-    test_rect.cpp
+    attachable.cpp \
+    simpleroom.cpp \
+    abstract_room.cpp
 
 HEADERS  += mainwindow.h \
-    test_rect.h
+    attachable.h \
+    simpleroom.h \
+    abstract_room.h
 
 FORMS    += mainwindow.ui
