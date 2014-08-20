@@ -2,16 +2,16 @@
 
 #include <QtWidgets>
 
-AbstractRoom::AbstractRoom(const QColor &color, const qreal &w, const qreal &h)
+AbstractRoom::AbstractRoom()
 {
-    this->_color = color;
+    this->_color = Qt::black;
     this->_lb = QPointF(0, 0);
-    this->_rt = _lb + QPointF(w, -h);
-    this->_lt = _lb + QPointF(0, -h);
-    this->_rb = _lb + QPointF(w, 0);
+    this->_rt = _lb + QPointF(UNIFIED_SIZE, -UNIFIED_SIZE);
+    this->_lt = _lb + QPointF(0, -UNIFIED_SIZE);
+    this->_rb = _lb + QPointF(UNIFIED_SIZE, 0);
 
     setFlags(ItemIsSelectable);
-    updateCurrentPolygon();
+    updateCurrentShape();
 }
 
 QRectF AbstractRoom::boundingRect() const
@@ -28,7 +28,7 @@ void AbstractRoom::transformCornersCoords()
 }
 
 // Just a П shape. Should be overridden.
-void AbstractRoom::updateCurrentPolygon()
+void AbstractRoom::updateCurrentShape()
 {
     if (!_currentShape.empty())
     {
@@ -46,12 +46,13 @@ void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
     Attachable::attach(p1, p2);
     // now build upon it
     transformCornersCoords();
-    updateCurrentPolygon();
+    updateCurrentShape();
 }
 
 void AbstractRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
+    Q_UNUSED(option);
     QBrush b = painter->brush();
     painter->setBrush(Qt::NoBrush);
     painter->setPen(QPen(_color, 3, Qt::SolidLine, Qt::RoundCap));

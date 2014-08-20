@@ -10,7 +10,7 @@ class AbstractRoom :
         public Attachable
 {
 public:
-    AbstractRoom(const QColor &color, const qreal &w, const qreal &h);
+    AbstractRoom();
     virtual ~AbstractRoom() { _currentShape.clear(); }
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget);
@@ -19,13 +19,14 @@ public:
     void attach(const QPointF &p1, const QPointF &p2);
 
 protected:
-    virtual void updateCurrentPolygon();
+    virtual void updateCurrentShape();
     QPointF _lb; // left bottom corner
     QPointF _rt; // right top corner
     QPointF _lt; // left top corner
     QPointF _rb; // right bottom corner
     QColor _color;
     QVector<QLineF> _currentShape;
+    static constexpr qreal UNIFIED_SIZE = 100;
 
 private:
     void transformCornersCoords();

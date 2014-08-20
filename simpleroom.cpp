@@ -2,20 +2,10 @@
 
 #include <QtWidgets>
 
-SimpleRoom::SimpleRoom(const QColor &color, const qreal &w, const qreal &h)
-    : AbstractRoom(color, w, h)
-{
-    this->_color = color;
-    this->_lb = QPointF(0, 0);
-    this->_rt = _lb + QPointF(w, -h);
-    this->_lt = _lb + QPointF(0, -h);
-    this->_rb = _lb + QPointF(w, 0);
+SimpleRoom::SimpleRoom()
+    : AbstractRoom() {}
 
-    setFlags(ItemIsSelectable);
-    updateCurrentPolygon();
-}
-
-void SimpleRoom::updateCurrentPolygon()
+void SimpleRoom::updateCurrentShape()
 {
     if (!_currentShape.empty())
     {

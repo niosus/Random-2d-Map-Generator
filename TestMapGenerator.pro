@@ -17,11 +17,15 @@ SOURCES += main.cpp \
         mainwindow.cpp \
     attachable.cpp \
     simpleroom.cpp \
-    abstract_room.cpp
+    abstract_room.cpp \
+    abstractcorridor.cpp \
+    qgraphicsviewcustom.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
     simpleroom.h \
-    abstract_room.h
+    abstract_room.h \
+    abstractcorridor.h \
+    qgraphicsviewcustom.h
 
 FORMS    += mainwindow.ui

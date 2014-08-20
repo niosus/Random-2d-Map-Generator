@@ -9,12 +9,12 @@ class SimpleRoom :
         public AbstractRoom
 {
 public:
-    SimpleRoom(const QColor &color, const qreal &w, const qreal &h);
+    SimpleRoom();
     virtual ~SimpleRoom() {}
 
 protected:
     // this function needs to be defined to override the drawn shape
-    void updateCurrentPolygon();
+    void updateCurrentShape();
 
 };
 
