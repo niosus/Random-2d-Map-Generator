@@ -18,12 +18,16 @@ SOURCES += main.cpp \
     attachable.cpp \
     simpleroom.cpp \
     abstract_room.cpp \
-    simplecorridor.cpp
+    simplecorridor.cpp \
+    qgraphicsviewcustom.cpp \
+    container_room.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
     simpleroom.h \
     abstract_room.h \
-    simplecorridor.h
+    simplecorridor.h \
+    qgraphicsviewcustom.h \
+    container_room.h
 
 FORMS    += mainwindow.ui

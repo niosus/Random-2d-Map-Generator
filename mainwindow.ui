@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="QGraphicsViewCustom" name="graphicsView">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>634</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHello_World">
@@ -52,6 +52,16 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QGraphicsViewCustom</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">qgraphicsviewcustom.h</header>
+   <slots>
+    <signal>onMouseWheel()</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

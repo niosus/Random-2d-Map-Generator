@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "simpleroom.h"
+#include "container_room.h"
+#include "simplecorridor.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -10,6 +12,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     populateScene();
     ui->graphicsView->setScene(scene);
+    ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    ui->graphicsView->setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 }
 
 MainWindow::~MainWindow()
@@ -21,15 +27,35 @@ void MainWindow::populateScene()
 {
     scene = new QGraphicsScene;
     // Populate scene
-    qreal width = 40;
-    qreal height = 40;
-    QColor color = QColor::fromRgb(0, 0, 0);
-    QVector<Attachable*> objects;
-    for (qreal i = 0; i < 200; i += 50)
+    ContainerRoom* container = new SimpleCorridor(500);
+    container->addConnector("wl", 0.2);
+    container->addConnector("wl", 0.7);
+    container->addConnector("wr", 0.5);
+
+    ContainerRoom* container2 = new SimpleCorridor(700);
+    container2->addConnector("wr", 0.2);
+    QVector<AbstractRoom*> rooms2;
+    rooms2.append(new SimpleRoom);
+    QVector<AbstractRoom*> rooms;
+    for (int i = 0; i < container->currentFreeConnectors() - 1 ; ++i)
     {
-        objects.append(new SimpleRoom(color, width, height));
-        objects.back()->attach(QPointF(i, i), QPointF(i + 10, i + 10));
-        QGraphicsItem *item = dynamic_cast<QGraphicsItem*>(objects.back());
-        scene->addItem(item);
+        rooms.append(new SimpleRoom);
     }
+    rooms.append(container2);
+
+    container->addRoomsToConnectors(rooms);
+    container2->addRoomsToConnectors(rooms2);
+    container->attach(QPointF(0,0), QPointF(1,1));
+    container->registerToScene(scene);
+
+
+//    QVector<Attachable*> objects;
+//    for (qreal i = 0; i < 400; i += 100)
+//    {
+//        objects.append(new SimpleRoom());
+//        objects.back()->attach(QPointF(i, i), QPointF(i + 10, i + 5));
+//        QGraphicsItem *item = dynamic_cast<QGraphicsItem*>(objects.back());
+//        scene->addItem(item);
+//    }
 }
+

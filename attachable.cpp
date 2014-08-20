@@ -3,15 +3,20 @@
 
 Attachable::Attachable()
 {
-    _transform.reset();
+    _viewToWorld.reset();
 }
 
 Attachable::~Attachable() {}
 
 void Attachable::attach(const QPointF &p1, const QPointF &p2)
 {
+    // save the current state
+    _worldToView = _viewToWorld.inverted();
+    // set to identity
+    _viewToWorld = QTransform();
+    // construct new transform
     QPointF diff(p2 - p1);
-    _transform.translate(p1.x(), -p1.y());
-    _transform.rotateRadians(atan2(-fabs(diff.y()), fabs(diff.x())));
+    _viewToWorld.translate(p1.x(), p1.y());
+    _viewToWorld.rotateRadians(atan2(diff.y(), diff.x()));
 }
 
