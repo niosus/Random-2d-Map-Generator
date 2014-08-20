@@ -11,10 +11,10 @@ void SimpleRoom::updateCurrentShape()
     {
         _currentShape.clear();
     }
-    _currentShape.append(QLineF(_lb, _lb + 0.4 * (_rb - _lb)));
-    _currentShape.append(QLineF(_lb, _lt));
-    _currentShape.append(QLineF(_lt, _rt));
-    _currentShape.append(QLineF(_rt, _rb));
-    _currentShape.append(QLineF(_rb, _lb + 0.6 * (_rb - _lb)));
+    _currentShape.append(QLineF(_corners[LB], _corners[LB] + 0.4 * (_corners[RB] - _corners[LB])));
+    _currentShape.append(QLineF(_corners[LB], _corners[LT]));
+    _currentShape.append(QLineF(_corners[LT], _corners[RT]));
+    _currentShape.append(QLineF(_corners[RT], _corners[RB]));
+    _currentShape.append(QLineF(_corners[RB], _corners[LB] + 0.6 * (_corners[RB] - _corners[LB])));
 }
 

@@ -19,13 +19,15 @@ SOURCES += main.cpp \
     simpleroom.cpp \
     abstract_room.cpp \
     abstractcorridor.cpp \
-    qgraphicsviewcustom.cpp
+    qgraphicsviewcustom.cpp \
+    container_room.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
     simpleroom.h \
     abstract_room.h \
     abstractcorridor.h \
-    qgraphicsviewcustom.h
+    qgraphicsviewcustom.h \
+    container_room.h
 
 FORMS    += mainwindow.ui

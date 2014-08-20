@@ -10,6 +10,7 @@ public:
     Attachable();
     virtual ~Attachable();
     virtual void attach(const QPointF &p1, const QPointF &p2);
+    virtual void detach() = 0;
 
 protected:
     QTransform _transform;
