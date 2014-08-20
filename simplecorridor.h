@@ -14,9 +14,17 @@ public:
     virtual void attach(const QPointF &p1, const QPointF &p2)
     {
         ContainerRoom::attach(p1, p2);
+        _hasParent = true;
     }
 
     virtual void registerToScene(QGraphicsScene* scene);
+
+protected:
+    // a function to update the shape to be drawn by paint()
+    virtual void updateCurrentShape();
+
+private:
+    bool _hasParent;
 
 };
 

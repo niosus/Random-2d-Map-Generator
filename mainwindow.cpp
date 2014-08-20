@@ -27,15 +27,22 @@ void MainWindow::populateScene()
 {
     scene = new QGraphicsScene;
     // Populate scene
-    ContainerRoom* container = new SimpleCorridor(500);
+    ContainerRoom* container = new SimpleCorridor(400);
     container->addConnector("wl", 0.2);
     container->addConnector("wl", 0.7);
+    container->addConnector("wb", 0);
     container->addConnector("wr", 0.5);
 
-    ContainerRoom* container2 = new SimpleCorridor(700);
+    ContainerRoom* container2 = new SimpleCorridor(600);
     container2->addConnector("wr", 0.2);
+    container2->addConnector("wr", 0.5);
+    container2->addConnector("wl", 0.5);
+    container2->addConnector("wl", 0.7);
     QVector<AbstractRoom*> rooms2;
-    rooms2.append(new SimpleRoom);
+    for (int i = 0; i < container2->currentFreeConnectors(); ++i)
+    {
+        rooms2.append(new SimpleRoom);
+    }
     QVector<AbstractRoom*> rooms;
     for (int i = 0; i < container->currentFreeConnectors() - 1 ; ++i)
     {
@@ -45,8 +52,11 @@ void MainWindow::populateScene()
 
     container->addRoomsToConnectors(rooms);
     container2->addRoomsToConnectors(rooms2);
+
     container->attach(QPointF(0,0), QPointF(1,1));
+
     container->registerToScene(scene);
+
 
 
 //    QVector<Attachable*> objects;
