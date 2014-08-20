@@ -31,9 +31,11 @@ protected:
     static const QString RB;
     static const QString LT;
     static const QString RT;
+    QVector<QPointF*> _allKeyPoints;
 
 private:
     void transformCornersCoords();
+    void transform();
 };
 
 #endif // TEST_RECT_H

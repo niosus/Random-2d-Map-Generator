@@ -18,6 +18,12 @@ AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
     _corners[RT] = _corners[LB] + QPointF(xSize, -ySize);
     _corners[LT] = _corners[LB] + QPointF(0, -ySize);
     _corners[RB] = _corners[LB] + QPointF(xSize, 0);
+
+    for (const QString& key:_corners.keys())
+    {
+        _allKeyPoints.append(&_corners[key]);
+    }
+
     updateCurrentShape();
 }
 
@@ -55,6 +61,14 @@ void AbstractRoom::transformCornersCoords()
     }
 }
 
+void AbstractRoom::transform()
+{
+    for (QPointF* point: _allKeyPoints)
+    {
+        *point = _transform.map(*point);
+    }
+}
+
 // Just a П shape. Should be overridden.
 void AbstractRoom::updateCurrentShape()
 {
@@ -73,8 +87,8 @@ void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
     // first call the base class part
     Attachable::attach(p1, p2);
     // now build upon it
-    transformCornersCoords();
-    updateCurrentShape();
+    this->transform();
+    this->updateCurrentShape();
 }
 
 // overriding attach function

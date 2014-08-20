@@ -14,11 +14,14 @@ public:
             const qreal &ySize);
     virtual ~ContainerRoom();
 
+    int holdingCapacity();
+
 protected:
     qreal _xSize;
     qreal _ySize;
     QVector<Attachable*> _children;
     QVector<Connector> _connectors;
+    QVector<QLineF> _walls;
 };
 
 #endif // CONTAINER_ROOM_H
