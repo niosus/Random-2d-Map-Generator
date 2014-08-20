@@ -21,14 +21,15 @@ void MainWindow::populateScene()
 {
     scene = new QGraphicsScene;
     // Populate scene
-    int width = 100;
-    int height = 100;
+    qreal width = 40;
+    qreal height = 40;
     QColor color = QColor::fromRgb(0, 0, 0);
-    Attachable *attachable = new SimpleRoom(color, width, height);
-    attachable->attach(QPointF(50, 50), QPointF(60, 60));
-    QGraphicsItem *item = dynamic_cast<QGraphicsItem*>(attachable);
-    QGraphicsItem *item2 = new SimpleRoom(color, width, height);
-    item2->setPos(QPointF(0, 0));
-    scene->addItem(item);
-    scene->addItem(item2);
+    QVector<Attachable*> objects;
+    for (qreal i = 0; i < 200; i += 50)
+    {
+        objects.append(new SimpleRoom(color, width, height));
+        objects.back()->attach(QPointF(i, i), QPointF(i + 10, i + 10));
+        QGraphicsItem *item = dynamic_cast<QGraphicsItem*>(objects.back());
+        scene->addItem(item);
+    }
 }

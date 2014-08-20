@@ -17,11 +17,13 @@ SOURCES += main.cpp \
         mainwindow.cpp \
     attachable.cpp \
     simpleroom.cpp \
-    abstract_room.cpp
+    abstract_room.cpp \
+    simplecorridor.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
     simpleroom.h \
-    abstract_room.h
+    abstract_room.h \
+    simplecorridor.h
 
 FORMS    += mainwindow.ui

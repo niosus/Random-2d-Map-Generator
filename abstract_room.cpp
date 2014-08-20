@@ -52,6 +52,7 @@ void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
 void AbstractRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
+    Q_UNUSED(option);
     QBrush b = painter->brush();
     painter->setBrush(Qt::NoBrush);
     painter->setPen(QPen(_color, 3, Qt::SolidLine, Qt::RoundCap));
