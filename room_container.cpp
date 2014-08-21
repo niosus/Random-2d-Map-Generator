@@ -122,13 +122,18 @@ void ContainerRoom::addRoomsToConnectors(const QVector<AbstractRoom*>& rooms)
         qDebug() << "we got more elements than we can store, will skip some of them";
     }
     int size = std::min(rooms.size(), currentFreeConnectors());
+    AbstractRoom* root = findRoot();
     for (int i = 0; i < size; ++i)
     {
-        _children.append(rooms[i]);
         rooms[i]->attach(
                     _connectors[i]->first(),
                     _connectors[i]->second(),
                     this);
+        if (root->intersectsWith(rooms[i]))
+        {
+            rooms[i]->setColor(Qt::red);
+        }
+        _children.append(rooms[i]);
     }
 }
 
@@ -151,6 +156,15 @@ void ContainerRoom::attach(
     this->updateConnectorPositions();
     this->reattachChildren();
     this->updateCurrentShape();
+
+    AbstractRoom* root = findRoot();
+    for (AbstractRoom* room: _children)
+    {
+        if (root->intersectsWith(room))
+        {
+            room->setColor(Qt::red);
+        }
+    }
 }
 
 void ContainerRoom::registerToScene(QGraphicsScene* scene)
@@ -161,4 +175,30 @@ void ContainerRoom::registerToScene(QGraphicsScene* scene)
         qDebug() << "registering";
         room->registerToScene(scene);
     }
+}
+
+AbstractRoom* ContainerRoom::findRoot()
+{
+    AbstractRoom* root = this;
+    while(root->parent())
+    {
+        root = root->parent();
+    }
+    return root;
+}
+
+bool ContainerRoom::intersectsWith(const AbstractRoom* other) const
+{
+    qDebug() << "checking intersection";
+    qDebug() << this->_horizontalSpan << this->_verticalSpan;
+    qDebug() << other->_horizontalSpan << other->_verticalSpan;
+    if (AbstractRoom::intersectsWith(other)) { return true; }
+    for (const AbstractRoom* room: _children)
+    {
+        if (room->intersectsWith(other))
+        {
+            return true;
+        }
+    }
+    return false;
 }

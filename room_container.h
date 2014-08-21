@@ -49,10 +49,16 @@ public:
             AbstractRoom* parent = NULL);
 
     virtual void registerToScene(QGraphicsScene* scene);
+
+    // override intersection mechanism as it needs
+    // to be triggered for children also
+    virtual bool intersectsWith(const AbstractRoom* other) const;
 protected:
 
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape();
+
+    AbstractRoom* findRoot();
 
     qreal _xSize;
     qreal _ySize;

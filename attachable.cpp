@@ -15,6 +15,7 @@ void Attachable::attach(
 {
     // save the current state
     _worldToView = _viewToWorld.inverted();
+
     // set to identity
     _viewToWorld = QTransform();
     // construct new transform

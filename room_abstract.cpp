@@ -31,7 +31,8 @@ AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
         _allKeyPoints.append(&_corners[key]);
     }
 
-    updateBasicShape();
+    this->updateBasicShape();
+    this->updateRoomSpans();
 }
 
 void AbstractRoom::updateBasicShape()
@@ -43,30 +44,40 @@ void AbstractRoom::updateBasicShape()
     _basicShape[WALL_BOTTOM] = QLineF(_corners[RB], _corners[LB]);
 }
 
+void AbstractRoom::getMinMax(QPointF& pMin, QPointF& pMax) const
+{
+    pMax = QPointF(SMALL_NUM, SMALL_NUM);
+    pMin = QPointF(BIG_NUM, BIG_NUM);
+    for (const QString& key: _corners.keys())
+    {
+        if (_corners[key].x() > pMax.x())
+        {
+            pMax.setX(_corners[key].x());
+        }
+        if (_corners[key].y() > pMax.y())
+        {
+            pMax.setY(_corners[key].y());
+        }
+        if (_corners[key].x() < pMin.x())
+        {
+            pMin.setX(_corners[key].x());
+        }
+        if (_corners[key].y() < pMin.y())
+        {
+            pMin.setY(_corners[key].y());
+        }
+    }
+}
+
 QRectF AbstractRoom::boundingRect() const
 {
     QPointF maxPoint(SMALL_NUM, SMALL_NUM);
     QPointF minPoint(BIG_NUM, BIG_NUM);
-    for (const QString& key: _corners.keys())
-    {
-        if (_corners[key].x() > maxPoint.x())
-        {
-            maxPoint.setX(_corners[key].x());
-        }
-        if (_corners[key].y() > maxPoint.y())
-        {
-            maxPoint.setY(_corners[key].y());
-        }
-        if (_corners[key].x() < minPoint.x())
-        {
-            minPoint.setX(_corners[key].x());
-        }
-        if (_corners[key].y() < minPoint.y())
-        {
-            minPoint.setY(_corners[key].y());
-        }
-    }
-    return QRectF(minPoint, maxPoint);
+    getMinMax(minPoint, maxPoint);
+    QPointF size = maxPoint-minPoint;
+    size.setX(fabs(size.x()) + 50);
+    size.setY(fabs(size.y()) + 50);
+    return QRectF(minPoint, size);
 }
 
 void AbstractRoom::transform()
@@ -79,6 +90,68 @@ void AbstractRoom::transform()
         // translate to the new pos in the world
         *point = _viewToWorld.map(*point);
     }
+}
+
+void AbstractRoom::updateRoomSpans()
+{
+    QPointF maxPoint(SMALL_NUM, SMALL_NUM);
+    QPointF minPoint(BIG_NUM, BIG_NUM);
+    getMinMax(minPoint, maxPoint);
+    _horizontalSpan.first = minPoint.x();
+    _horizontalSpan.second = maxPoint.x();
+    _verticalSpan.first = minPoint.y();
+    _verticalSpan.second = maxPoint.y();
+    qDebug() << _horizontalSpan << _verticalSpan;
+}
+
+bool AbstractRoom::intersectsWith(const AbstractRoom* other) const
+{
+    // if we are a parent of other,
+    // makes no sense to intersect
+    if (other->_parent == this) { return false; }
+    // simple AABB intersection
+    if (!this->intersectsSimple(other))
+    {
+        // even the simple coarse intersection
+        // did not trigger, so no intersection.
+        return false;
+    }
+    // intersects coarsely, so let's check
+    // if precise intersection works
+    if (this->intersectsPrecise(other))
+    {
+        // yes, they do intersect indeed
+        return true;
+    }
+    // their bounding boxes intersect,
+    // but not the actual objects
+    return false;
+}
+
+bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
+{
+    if (other->_horizontalSpan.first < other->_horizontalSpan.second
+            && other->_horizontalSpan.second > other->_horizontalSpan.first)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
+{
+    QPointF* dummy = NULL;
+    for (const QLineF& line: _basicShape.values())
+    {
+        for (const QLineF& lineOther: other->_basicShape.values())
+        {
+            if(line.intersect(lineOther, dummy) == QLineF::BoundedIntersection)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // overriding attach function
@@ -97,6 +170,8 @@ void AbstractRoom::attach(
 
     //set parent
     _parent = parent;
+
+    this->updateRoomSpans();
 }
 
 // overriding attach function

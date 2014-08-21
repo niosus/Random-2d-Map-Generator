@@ -14,7 +14,9 @@ public:
             qreal xSize = UNIFIED_SIZE,
             qreal ySize = UNIFIED_SIZE);
     virtual ~AbstractRoom() { _currentShape.clear(); }
+
     QRectF boundingRect() const;
+
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget);
 
     // overriding the function attach
@@ -26,9 +28,28 @@ public:
 
     virtual void registerToScene(QGraphicsScene* scene);
 
+    virtual bool intersectsWith(const AbstractRoom* other) const;
+
+    inline AbstractRoom* parent() const
+    {
+        return _parent;
+    }
+
+    void setColor(QColor color) { _color = color; }
+
+
+    // span of the room along axes needed
+    // for intersecting with others
+    QPair<qreal, qreal> _horizontalSpan;
+    QPair<qreal, qreal> _verticalSpan;
+
 protected:
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape() = 0;
+
+    virtual bool intersectsSimple(const AbstractRoom* other) const;
+
+    virtual bool intersectsPrecise(const AbstractRoom* other) const;
 
     // corners of the room's basic shape
     QHash<QString, QPointF> _corners;
@@ -67,12 +88,6 @@ protected:
     // Holds pointers to all points.
     QVector<QPointF*> _allKeyPoints;
 
-    QTransform _currentTransform;
-
-    // span of the room along axes needed
-    // for intersecting with others
-    QLineF _horizontalSpan;
-    QLineF _verticalSpan;
 
     // parent that this room is attached to
     AbstractRoom* _parent;
@@ -82,6 +97,10 @@ private:
     // given transform when the room gets attached
     void transform();
     void updateBasicShape();
+    // needed for coarse intersection;
+    void updateRoomSpans();
+    // get bounds
+    void getMinMax(QPointF& pMin, QPointF& pMax) const;
 };
 
 #endif // TEST_RECT_H
