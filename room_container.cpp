@@ -1,7 +1,7 @@
 #include <qmath.h>
 #include <QVector2D>
 #include <QDebug>
-#include "container_room.h"
+#include "room_container.h"
 
 ContainerRoom::ContainerRoom(
         const qreal &xSize,
@@ -37,17 +37,35 @@ int ContainerRoom::holdingCapacity()
     return horizontalCapacity + verticalCapacity;
 }
 
+bool ContainerRoom::overlapsOtherConnectors(
+        Connector* connector, const QString tag)
+{
+    //check if the connector intersects with other
+    for (Connector* c: _connectorsPos[tag].values())
+    {
+        if (c->intersectsWith(connector))
+        {
+            // we cannot add a new connector;
+            qDebug() << "ERROR: Cannot add a new connector, intersects with "<< c->first() << c->second();
+            return true;
+        }
+    }
+    return false;
+}
+
 void ContainerRoom::addConnector(const QString &lineTag, const qreal &lineFraction)
 {
-    Connector * connector = new Connector(
+    Connector *connector = new Connector(
                 _basicShape[lineTag],
                 lineTag,
                 lineFraction,
                 UNIFIED_SIZE);
+    if (overlapsOtherConnectors(connector, lineTag)) { return; }
 
     // push the connector to vector
     _connectors.push_back(connector);
-    // use the connector in vector from now on
+
+    // add the connector
     _connectorsPos[lineTag].insert(lineFraction, connector);
 
     updateCurrentShape();
@@ -90,7 +108,10 @@ void ContainerRoom::reattachChildren()
     for (int i = 0; i < size; ++i)
     {
         qDebug() << "attaching child " << i;
-        _children[i]->attach(_connectors[i]->first(), _connectors[i]->second());
+        _children[i]->attach(
+                    _connectors[i]->first(),
+                    _connectors[i]->second(),
+                    this);
     }
 }
 
@@ -104,7 +125,10 @@ void ContainerRoom::addRoomsToConnectors(const QVector<AbstractRoom*>& rooms)
     for (int i = 0; i < size; ++i)
     {
         _children.append(rooms[i]);
-        rooms[i]->attach(_connectors[i]->first(), _connectors[i]->second());
+        rooms[i]->attach(
+                    _connectors[i]->first(),
+                    _connectors[i]->second(),
+                    this);
     }
 }
 
@@ -112,14 +136,18 @@ void ContainerRoom::updateConnectorPositions()
 {
     for (Connector* connector: _connectors)
     {
+        // this is needed to tell connector where it is in the world
         connector->updateParentLine(_basicShape[connector->parentLineTag()]);
     }
 }
 
 // overriding the function attach
-void ContainerRoom::attach(const QPointF &p1, const QPointF &p2)
+void ContainerRoom::attach(
+        const QPointF &p1,
+        const QPointF &p2,
+        AbstractRoom *parent)
 {
-    AbstractRoom::attach(p1, p2);
+    AbstractRoom::attach(p1, p2, parent);
     this->updateConnectorPositions();
     this->reattachChildren();
     this->updateCurrentShape();

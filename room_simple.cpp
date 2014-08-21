@@ -1,4 +1,4 @@
-#include "simpleroom.h"
+#include "room_simple.h"
 
 #include <QtWidgets>
 
@@ -19,10 +19,13 @@ void SimpleRoom::updateCurrentShape()
 }
 
 // overriding attach function
-void SimpleRoom::attach(const QPointF &p1, const QPointF &p2)
+void SimpleRoom::attach(
+        const QPointF &p1,
+        const QPointF &p2,
+        AbstractRoom *parent)
 {
     // first call the base class part
-    AbstractRoom::attach(p1, p2);
+    AbstractRoom::attach(p1, p2, parent);
     this->updateCurrentShape();
 }
 

@@ -19,7 +19,10 @@ public:
 
     void updateParentLine(const QLineF &parentLine);
 
-    inline const QString& parentLineTag() {
+    bool intersectsWith(const Connector *other);
+
+    inline const QString& parentLineTag() const
+    {
         return _parentLineTag;
     }
 

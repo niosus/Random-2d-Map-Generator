@@ -4,11 +4,14 @@
 Attachable::Attachable()
 {
     _viewToWorld.reset();
+    _worldToView.reset();
 }
 
 Attachable::~Attachable() {}
 
-void Attachable::attach(const QPointF &p1, const QPointF &p2)
+void Attachable::attach(
+        const QPointF &p1,
+        const QPointF &p2)
 {
     // save the current state
     _worldToView = _viewToWorld.inverted();

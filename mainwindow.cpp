@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "simpleroom.h"
-#include "container_room.h"
-#include "simplecorridor.h"
+#include "room_simple.h"
+#include "room_container.h"
+#include "corridor_simple.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -35,7 +35,7 @@ void MainWindow::populateScene()
 
     ContainerRoom* container2 = new SimpleCorridor(600);
     container2->addConnector("wr", 0.2);
-    container2->addConnector("wr", 0.5);
+    container2->addConnector("wr", 0.3);
     container2->addConnector("wl", 0.5);
     container2->addConnector("wl", 0.7);
 

@@ -1,11 +1,9 @@
-#include "simplecorridor.h"
+#include "corridor_simple.h"
 
 #include <QtWidgets>
 
 SimpleCorridor::SimpleCorridor(const qreal &length, const qreal &width)
-    :ContainerRoom(width, length) {
-    _hasParent = false;
-}
+    :ContainerRoom(width, length) {}
 
 
 void SimpleCorridor::registerToScene(QGraphicsScene* scene)
@@ -24,7 +22,7 @@ void SimpleCorridor::updateCurrentShape()
     // iterate through all walls
     for (const QString& tag: _basicShape.keys())
     {
-        if (_hasParent && tag == WALL_BOTTOM)
+        if (_parent != NULL && tag == WALL_BOTTOM)
         {
             continue;
         }

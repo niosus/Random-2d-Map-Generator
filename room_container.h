@@ -1,7 +1,7 @@
 #ifndef CONTAINER_ROOM_H
 #define CONTAINER_ROOM_H
 
-#include "abstract_room.h"
+#include "room_abstract.h"
 #include "attachable.h"
 #include "connector.h"
 
@@ -43,7 +43,10 @@ public:
     void updateConnectorPositions();
 
     // overriding the function attach
-    virtual void attach(const QPointF &p1, const QPointF &p2);
+    virtual void attach(
+            const QPointF &p1,
+            const QPointF &p2,
+            AbstractRoom* parent = NULL);
 
     virtual void registerToScene(QGraphicsScene* scene);
 protected:
@@ -56,6 +59,11 @@ protected:
     QVector<AbstractRoom*> _children;
     QVector<Connector*> _connectors;
     QHash<QString, QMap<qreal, Connector*> > _connectorsPos;
+
+private:
+    bool overlapsOtherConnectors(
+            Connector* connector,
+            const QString tag);
 };
 
 #endif // CONTAINER_ROOM_H

@@ -18,7 +18,10 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget);
 
     // overriding the function attach
-    virtual void attach(const QPointF &p1, const QPointF &p2);
+    virtual void attach(
+            const QPointF &p1,
+            const QPointF &p2,
+            AbstractRoom* parent = NULL);
     virtual void detach();
 
     virtual void registerToScene(QGraphicsScene* scene);
@@ -65,6 +68,14 @@ protected:
     QVector<QPointF*> _allKeyPoints;
 
     QTransform _currentTransform;
+
+    // span of the room along axes needed
+    // for intersecting with others
+    QLineF _horizontalSpan;
+    QLineF _verticalSpan;
+
+    // parent that this room is attached to
+    AbstractRoom* _parent;
 
 private:
     // transforms _allKeyPoints with a

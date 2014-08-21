@@ -30,3 +30,17 @@ void Connector::updateParentLine(const QLineF &parentLine)
 {
     _parentLine = parentLine;
 }
+
+bool Connector::intersectsWith(const Connector* other)
+{
+    if (other->parentLineTag() != this->parentLineTag())
+    {
+        return false;
+    }
+    if (_startOffset < other->_endOffset
+            && _endOffset > other->_startOffset)
+    {
+        return true;
+    }
+    return false;
+}

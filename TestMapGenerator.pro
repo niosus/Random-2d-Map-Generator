@@ -16,20 +16,20 @@ QMAKE_CXXFLAGS += -std=c++0x
 SOURCES += main.cpp \
         mainwindow.cpp \
     attachable.cpp \
-    simpleroom.cpp \
-    abstract_room.cpp \
-    simplecorridor.cpp \
-    qgraphicsviewcustom.cpp \
-    container_room.cpp \
-    connector.cpp
+    connector.cpp \
+    room_abstract.cpp \
+    room_simple.cpp \
+    corridor_simple.cpp \
+    room_container.cpp \
+    view_maze.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
-    simpleroom.h \
-    abstract_room.h \
-    simplecorridor.h \
-    qgraphicsviewcustom.h \
-    container_room.h \
-    connector.h
+    connector.h \
+    room_abstract.h \
+    room_simple.h \
+    corridor_simple.h \
+    room_container.h \
+    view_maze.h
 
 FORMS    += mainwindow.ui

@@ -1,4 +1,4 @@
-#include "abstract_room.h"
+#include "room_abstract.h"
 
 #include <QtWidgets>
 
@@ -18,6 +18,7 @@ const QString AbstractRoom::WALL_RIGHT = "wr";
 
 AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
 {
+    _parent = NULL;
     _color = Qt::black;
     _penWidth = 5;
     _corners[LB] = QPointF(0, 0);
@@ -81,7 +82,10 @@ void AbstractRoom::transform()
 }
 
 // overriding attach function
-void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
+void AbstractRoom::attach(
+        const QPointF &p1,
+        const QPointF &p2,
+        AbstractRoom *parent)
 {
     // first call the base class part
     Attachable::attach(p1, p2);
@@ -90,6 +94,9 @@ void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
     // shapes have to be updated as the
     // points have changed coordinates
     this->updateBasicShape();
+
+    //set parent
+    _parent = parent;
 }
 
 // overriding attach function

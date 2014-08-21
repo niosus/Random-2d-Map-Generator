@@ -2,7 +2,7 @@
 #define SIMPLEROOM_H
 
 #include <QColor>
-#include "abstract_room.h"
+#include "room_abstract.h"
 #include <QVector>
 
 class SimpleRoom :
@@ -12,7 +12,10 @@ public:
     SimpleRoom();
     virtual ~SimpleRoom() {}
     // overriding the function attach
-    virtual void attach(const QPointF &p1, const QPointF &p2);
+    virtual void attach(
+            const QPointF &p1,
+            const QPointF &p2,
+            AbstractRoom* parent = NULL);
 
 protected:
     // this function needs to be defined to override the drawn shape
