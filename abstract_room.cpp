@@ -31,7 +31,6 @@ AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
     }
 
     updateBasicShape();
-    updateCurrentShape();
 }
 
 void AbstractRoom::updateBasicShape()
@@ -81,18 +80,6 @@ void AbstractRoom::transform()
     }
 }
 
-// Just a П shape. Should be overridden.
-void AbstractRoom::updateCurrentShape()
-{
-    if (!_currentShape.empty())
-    {
-        _currentShape.clear();
-    }
-    _currentShape.append(_basicShape[WALL_LEFT]);
-    _currentShape.append(_basicShape[WALL_TOP]);
-    _currentShape.append(_basicShape[WALL_RIGHT]);
-}
-
 // overriding attach function
 void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
 {
@@ -103,7 +90,6 @@ void AbstractRoom::attach(const QPointF &p1, const QPointF &p2)
     // shapes have to be updated as the
     // points have changed coordinates
     this->updateBasicShape();
-    this->updateCurrentShape();
 }
 
 // overriding attach function

@@ -3,12 +3,12 @@
 
 #include "abstract_room.h"
 #include "attachable.h"
+#include "connector.h"
 
 // A room that can contain other rooms
 class ContainerRoom : public AbstractRoom
 {
 public:
-    typedef QPair<QPointF, QPointF> Connector;
     ContainerRoom(
             const qreal &xSize,
             const qreal &ySize);
@@ -39,6 +39,8 @@ public:
     void addRoomsToConnectors(const QVector<AbstractRoom*>& rooms);
 
     void reattachChildren();
+
+    void updateConnectorPositions();
 
     // overriding the function attach
     virtual void attach(const QPointF &p1, const QPointF &p2);

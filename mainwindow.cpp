@@ -38,13 +38,16 @@ void MainWindow::populateScene()
     container2->addConnector("wr", 0.5);
     container2->addConnector("wl", 0.5);
     container2->addConnector("wl", 0.7);
+
+    ContainerRoom* container3 = new SimpleCorridor(200);
     QVector<AbstractRoom*> rooms2;
-    for (int i = 0; i < container2->currentFreeConnectors(); ++i)
+    for (int i = 0; i < container2->currentFreeConnectors() - 1; ++i)
     {
         rooms2.append(new SimpleRoom);
     }
+    rooms2.append(container3);
     QVector<AbstractRoom*> rooms;
-    for (int i = 0; i < container->currentFreeConnectors() - 1 ; ++i)
+    for (int i = 0; i < container->currentFreeConnectors() - 1; ++i)
     {
         rooms.append(new SimpleRoom);
     }
@@ -53,19 +56,13 @@ void MainWindow::populateScene()
     container->addRoomsToConnectors(rooms);
     container2->addRoomsToConnectors(rooms2);
 
-    container->attach(QPointF(0,0), QPointF(1,1));
+    container->attach(QPointF(2,2), QPointF(1,1));
+
+    AbstractRoom* newRoom = new SimpleRoom;
+    QVector<AbstractRoom*> temp;
+    temp.append(newRoom);
+////    container->addRoomsToConnectors(temp);
 
     container->registerToScene(scene);
-
-
-
-//    QVector<Attachable*> objects;
-//    for (qreal i = 0; i < 400; i += 100)
-//    {
-//        objects.append(new SimpleRoom());
-//        objects.back()->attach(QPointF(i, i), QPointF(i + 10, i + 5));
-//        QGraphicsItem *item = dynamic_cast<QGraphicsItem*>(objects.back());
-//        scene->addItem(item);
-//    }
 }
 

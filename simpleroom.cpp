@@ -18,3 +18,11 @@ void SimpleRoom::updateCurrentShape()
     _currentShape.append(QLineF(_corners[RB], _corners[LB] + 0.7 * (_corners[RB] - _corners[LB])));
 }
 
+// overriding attach function
+void SimpleRoom::attach(const QPointF &p1, const QPointF &p2)
+{
+    // first call the base class part
+    AbstractRoom::attach(p1, p2);
+    this->updateCurrentShape();
+}
+

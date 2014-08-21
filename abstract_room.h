@@ -25,7 +25,7 @@ public:
 
 protected:
     // a function to update the shape to be drawn by paint()
-    virtual void updateCurrentShape();
+    virtual void updateCurrentShape() = 0;
 
     // corners of the room's basic shape
     QHash<QString, QPointF> _corners;

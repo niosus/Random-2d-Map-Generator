@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     abstract_room.cpp \
     simplecorridor.cpp \
     qgraphicsviewcustom.cpp \
-    container_room.cpp
+    container_room.cpp \
+    connector.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
@@ -28,6 +29,7 @@ HEADERS  += mainwindow.h \
     abstract_room.h \
     simplecorridor.h \
     qgraphicsviewcustom.h \
-    container_room.h
+    container_room.h \
+    connector.h
 
 FORMS    += mainwindow.ui

@@ -11,10 +11,12 @@ class SimpleRoom :
 public:
     SimpleRoom();
     virtual ~SimpleRoom() {}
+    // overriding the function attach
+    virtual void attach(const QPointF &p1, const QPointF &p2);
 
 protected:
     // this function needs to be defined to override the drawn shape
-    void updateCurrentShape();
+    virtual void updateCurrentShape();
 
 };
 
