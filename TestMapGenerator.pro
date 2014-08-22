@@ -32,4 +32,22 @@ HEADERS  += mainwindow.h \
     room_container.h \
     view_maze.h
 
+test {
+    message(Test build)
+    QT += testlib
+    TARGET = UnitTests
+
+    SOURCES -= main.cpp
+
+    HEADERS += test/test_first.h
+
+    SOURCES += test/test_first.cpp
+    SOURCES += test/test_main.cpp
+} else {
+    message(Normal build)
+}
+
 FORMS    += mainwindow.ui
+
+SUBDIRS += \
+    MapGeneratorSrc.pro
