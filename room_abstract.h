@@ -43,6 +43,8 @@ public:
     QPair<qreal, qreal> _horizontalSpan;
     QPair<qreal, qreal> _verticalSpan;
 
+    // TODO: has to redefine the shape as a polygon and then we can check for collisions in the pre-build way
+
 protected:
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape() = 0;

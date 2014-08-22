@@ -1,9 +1,9 @@
-#include "test_first.h"
+#include "test_wall.h"
 
 int main(int argc, char *argv[])
 {
-    TestFirst test1;
-    QTest::qExec(&test1, argc, argv);
+    TestWall testWall;
+    QTest::qExec(&testWall, argc, argv);
 
     return 0;
 }
