@@ -65,7 +65,7 @@ void MainWindow::populateScene()
 
     container->registerToScene(scene);
 
-    QList<QGraphicsItem*> inter = scene->collidingItems(container);
+    QList<QGraphicsItem*> inter = scene->collidingItems(container2);
     for (auto *item: inter)
     {
         AbstractRoom* room = dynamic_cast<AbstractRoom*>(item);

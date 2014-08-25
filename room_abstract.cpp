@@ -199,3 +199,16 @@ void AbstractRoom::registerToScene(QGraphicsScene* scene)
     scene->addItem(this);
 }
 
+QPainterPath AbstractRoom::shape() const
+{
+    QPainterPath path;
+    QPolygonF polygon;
+    polygon.append(_corners[LB]);
+    polygon.append(_corners[LT]);
+    polygon.append(_corners[RT]);
+    polygon.append(_corners[RB]);
+    polygon.append(_corners[LB]);
+    path.addPolygon(polygon);
+    return path;
+}
+

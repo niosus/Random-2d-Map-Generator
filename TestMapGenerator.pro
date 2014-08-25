@@ -22,9 +22,7 @@ SOURCES += main.cpp \
     corridor_simple.cpp \
     room_container.cpp \
     view_maze.cpp \
-    test/test_attachable.cpp \
     wall.cpp \
-    test/test_wall.cpp \
     wall_builder.cpp
 
 HEADERS  += mainwindow.h \
@@ -35,9 +33,7 @@ HEADERS  += mainwindow.h \
     corridor_simple.h \
     room_container.h \
     view_maze.h \
-    test/test_attachable.h \
     wall.h \
-    test/test_wall.h \
     wall_builder.h
 
 test {
@@ -46,18 +42,16 @@ test {
 
     SOURCES -= main.cpp
 
-    HEADERS +=
+    HEADERS += test/test_wall.h \
+            test/test_attachable.h
 
-    SOURCES +=
-    SOURCES += test/test_main.cpp
+    SOURCES += test/test_wall.cpp \
+            test/test_attachable.cpp \
+            test/test_main.cpp
 } else {
     message(Normal build)
 }
 
 FORMS    += mainwindow.ui
-
-SUBDIRS += \
-    MapGeneratorSrc.pro
-
 
 QT += testlib
