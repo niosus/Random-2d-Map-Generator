@@ -81,7 +81,16 @@ protected:
     static const QString LT;
     static const QString RT;
 
-    // names for walls in room frame (no transform)
+    /// names for walls in room frame (no transform)
+    ///       top
+    ///       ___
+    ///      |   |
+    /// left |   | right
+    ///       ---
+    ///      bottom
+    ///
+    /// The names don't correspond as shown
+    /// after the room is placed somewhere
     static const QString WALL_BOTTOM;
     static const QString WALL_TOP;
     static const QString WALL_LEFT;

@@ -130,23 +130,27 @@ bool AbstractRoom::intersectsWith(const AbstractRoom* other) const
 
 bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
 {
-    if (other->_horizontalSpan.first < other->_horizontalSpan.second
-            && other->_horizontalSpan.second > other->_horizontalSpan.first)
-    {
-        return true;
-    }
-    return false;
+    return this->collidesWithItem(other);
 }
 
 bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
 {
-    QPointF* dummy = NULL;
+    QPointF intersection;
     for (const QLineF& line: _basicShape.values())
     {
         for (const QLineF& lineOther: other->_basicShape.values())
         {
-            if(line.intersect(lineOther, dummy) == QLineF::BoundedIntersection)
+            if(line.intersect(lineOther, &intersection) == QLineF::BoundedIntersection)
             {
+                if (line.p1() == intersection
+                        || line.p2() == intersection
+                        || lineOther.p1() == intersection
+                        || lineOther.p2() == intersection)
+                {
+                    // they don't intersect, just touch.
+                    // touching is not a crime
+                    return false;
+                }
                 return true;
             }
         }
@@ -172,6 +176,11 @@ void AbstractRoom::attach(
     _parent = parent;
 
     this->updateRoomSpans();
+
+    if (!this->collidingItems().empty())
+    {
+        this->setColor(Qt::red);
+    }
 }
 
 // overriding attach function
@@ -197,6 +206,26 @@ void AbstractRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 void AbstractRoom::registerToScene(QGraphicsScene* scene)
 {
     scene->addItem(this);
+    QList<QGraphicsItem *> items = this->collidingItems();
+    if (items.empty()) {
+        // no colliding items
+        return;
+    } else {
+        for (QGraphicsItem *item: items)
+        {
+            AbstractRoom *room = dynamic_cast<AbstractRoom *>(item);
+            if (!room)
+            {
+                continue;
+            }
+            if (this->intersectsPrecise(room))
+            {
+                this->setColor(Qt::red);
+                return;
+            }
+        }
+
+    }
 }
 
 QPainterPath AbstractRoom::shape() const

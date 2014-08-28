@@ -39,10 +39,10 @@ void MainWindow::populateScene()
 //    container2->addConnector("wr", 0.5);
     container2->addConnector("wl", 0.7);
 
-    ContainerRoom* container3 = new SimpleCorridor(200);
+    ContainerRoom* container3 = new SimpleCorridor(800);
     container3->addConnector("wl", 0.1);
     QVector<AbstractRoom*> rooms3;
-    rooms3.append(new SimpleCorridor(100));
+    rooms3.append(new SimpleCorridor(800));
 
     QVector<AbstractRoom*> rooms2;
     for (int i = 0; i < container2->currentFreeConnectors() - 1; ++i)
@@ -65,14 +65,14 @@ void MainWindow::populateScene()
 
     container->registerToScene(scene);
 
-    QList<QGraphicsItem*> inter = scene->collidingItems(container2);
-    for (auto *item: inter)
-    {
-        AbstractRoom* room = dynamic_cast<AbstractRoom*>(item);
-        if (room)
-        {
-            room->setColor(Qt::red);
-        }
-    }
+//    QList<QGraphicsItem*> inter = scene->collidingItems(container2);
+//    for (auto *item: inter)
+//    {
+//        AbstractRoom* room = dynamic_cast<AbstractRoom*>(item);
+//        if (room)
+//        {
+//            room->setColor(Qt::red);
+//        }
+//    }
 }
 
