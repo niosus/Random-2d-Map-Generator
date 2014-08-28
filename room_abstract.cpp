@@ -33,7 +33,6 @@ AbstractRoom::AbstractRoom(
     }
 
     this->updateBasicShape();
-    this->updateRoomSpans();
     this->setParentItem(NULL);
 }
 
@@ -94,39 +93,6 @@ void AbstractRoom::transform()
     }
 }
 
-void AbstractRoom::updateRoomSpans()
-{
-    QPointF maxPoint(SMALL_NUM, SMALL_NUM);
-    QPointF minPoint(BIG_NUM, BIG_NUM);
-    getMinMax(minPoint, maxPoint);
-    _horizontalSpan.first = minPoint.x();
-    _horizontalSpan.second = maxPoint.x();
-    _verticalSpan.first = minPoint.y();
-    _verticalSpan.second = maxPoint.y();
-    qDebug() << _horizontalSpan << _verticalSpan;
-}
-
-bool AbstractRoom::intersectsWith(const AbstractRoom* other) const
-{
-    // simple AABB intersection
-    if (!this->intersectsSimple(other))
-    {
-        // even the simple coarse intersection
-        // did not trigger, so no intersection.
-        return false;
-    }
-    // intersects coarsely, so let's check
-    // if precise intersection works
-    if (this->intersectsPrecise(other))
-    {
-        // yes, they do intersect indeed
-        return true;
-    }
-    // their bounding boxes intersect,
-    // but not the actual objects
-    return false;
-}
-
 bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
 {
     return this->collidesWithItem(other, Qt::IntersectsItemBoundingRect);
@@ -134,22 +100,17 @@ bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
 
 bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
 {
-    QPointF intersection;
-    for (const QLineF& line: _basicShape.values())
-    {
-        for (const QLineF& lineOther: other->_basicShape.values())
-        {
-            if(line.intersect(lineOther, &intersection) == QLineF::BoundedIntersection)
-            {
-                if (line.p1() == intersection
-                        || line.p2() == intersection
-                        || lineOther.p1() == intersection
-                        || lineOther.p2() == intersection)
-                {
-                    // they don't intersect, just touch.
-                    // touching is not a crime
-                    return false;
-                }
+    if (this == other->parentItem()
+            || other == this->parentItem()) {
+        /// these two have a healthy relationship
+        /// they are allowed to touch each other and
+        /// this doesn't cause a collision
+        return false;
+    }
+    QPointF* dummy = NULL;
+    for (const QLineF& line: _basicShape.values()) {
+        for (const QLineF& lineOther: other->_basicShape.values()) {
+            if(line.intersect(lineOther, dummy) == QLineF::BoundedIntersection) {
                 return true;
             }
         }
@@ -171,10 +132,8 @@ void AbstractRoom::attach(
     // points have changed coordinates
     this->updateBasicShape();
 
-    this->updateRoomSpans();
-
     this->setParentItem(parent);
-    this->itemChange(QGraphicsItem::ItemPositionChange, _corners[LB]);
+    this->itemChange(QGraphicsItem::ItemPositionChange, p1);
 }
 
 // overriding attach function
@@ -197,31 +156,6 @@ void AbstractRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setBrush(b);
 }
 
-void AbstractRoom::registerToScene(QGraphicsScene* scene)
-{
-    scene->addItem(this);
-    QList<QGraphicsItem *> items = this->collidingItems();
-    if (items.empty()) {
-        // no colliding items
-        return;
-    } else {
-        for (QGraphicsItem *item: items)
-        {
-            AbstractRoom *room = dynamic_cast<AbstractRoom *>(item);
-            if (!room)
-            {
-                continue;
-            }
-            if (this->intersectsPrecise(room))
-            {
-                this->setColor(Qt::red);
-                return;
-            }
-        }
-
-    }
-}
-
 QPainterPath AbstractRoom::shape() const
 {
     QPainterPath path;
@@ -235,10 +169,26 @@ QPainterPath AbstractRoom::shape() const
     return path;
 }
 
+bool AbstractRoom::intersectsWithAnyInScene() const
+{
+    QList<QGraphicsItem *> items = this->collidingItems(Qt::IntersectsItemBoundingRect);
+    for (QGraphicsItem * item: items)
+    {
+        AbstractRoom * room = dynamic_cast<AbstractRoom *>(item);
+        if (!room) { continue; }
+        if (room->intersectsPrecise(this)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 QVariant AbstractRoom::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemPositionChange && scene()) {
-        qDebug() << "position has changed";
+        if (this->intersectsWithAnyInScene()) {
+            this->setColor(Qt::red);
+        }
     }
     return QGraphicsItem::itemChange(change, value);
 }

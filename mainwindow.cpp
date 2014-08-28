@@ -31,21 +31,21 @@ void MainWindow::populateScene()
     scene->addItem(container);
     container->attach(QPointF(2,2), QPointF(1,1), NULL);
 
-//    container->addConnector("wl", 0.2);
-//    container->addConnector("wl", 0.7);
-//    container->addConnector("wb", 0);
+    container->addConnector("wl", 0.2);
+    container->addConnector("wl", 0.7);
+    container->addConnector("wb", 0);
     container->addConnector("wr", 0.5);
 
     ContainerRoom* container2 = new SimpleCorridor(900);
-//    container2->addConnector("wr", 0.2);
-//    container2->addConnector("wr", 0.3);
-//    container2->addConnector("wr", 0.5);
+    container2->addConnector("wr", 0.2);
+    container2->addConnector("wr", 0.3);
+    container2->addConnector("wr", 0.5);
     container2->addConnector("wl", 0.7);
 
-    ContainerRoom* container3 = new SimpleCorridor(800);
+    ContainerRoom* container3 = new SimpleCorridor(400);
     container3->addConnector("wl", 0.1);
     QVector<AbstractRoom*> rooms3;
-    rooms3.append(new SimpleCorridor(800));
+    rooms3.append(new SimpleCorridor(200));
 
     QVector<AbstractRoom*> rooms2;
     for (int i = 0; i < container2->currentFreeConnectors() - 1; ++i)

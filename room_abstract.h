@@ -25,22 +25,10 @@ public:
             QGraphicsItem *parent);
     virtual void detach();
 
-    virtual void registerToScene(QGraphicsScene* scene);
-
-    virtual bool intersectsWith(const AbstractRoom* other) const;
-
     void setColor(QColor color) { _color = color; }
-
-
-    // span of the room along axes needed
-    // for intersecting with others
-    QPair<qreal, qreal> _horizontalSpan;
-    QPair<qreal, qreal> _verticalSpan;
 
     // TODO: has to redefine the shape as a polygon and then we can check for collisions in the pre-build way
     virtual QPainterPath shape() const;
-
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 protected:
     // a function to update the shape to be drawn by paint()
@@ -49,6 +37,10 @@ protected:
     virtual bool intersectsSimple(const AbstractRoom* other) const;
 
     virtual bool intersectsPrecise(const AbstractRoom* other) const;
+
+    virtual bool intersectsWithAnyInScene() const;
+
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     // corners of the room's basic shape
     QHash<QString, QPointF> _corners;
@@ -101,8 +93,6 @@ private:
     // given transform when the room gets attached
     void transform();
     void updateBasicShape();
-    // needed for coarse intersection;
-    void updateRoomSpans();
     // get bounds
     void getMinMax(QPointF& pMin, QPointF& pMax) const;
 };

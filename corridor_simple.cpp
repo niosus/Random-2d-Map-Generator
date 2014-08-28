@@ -5,12 +5,6 @@
 SimpleCorridor::SimpleCorridor(const qreal &length, const qreal &width)
     :ContainerRoom(width, length) {}
 
-
-void SimpleCorridor::registerToScene(QGraphicsScene* scene)
-{
-    ContainerRoom::registerToScene(scene);
-}
-
 // Accounts for missing parts at connectors.
 void SimpleCorridor::updateCurrentShape()
 {

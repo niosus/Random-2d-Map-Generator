@@ -152,30 +152,3 @@ void ContainerRoom::attach(
     this->reattachChildren();
     this->updateCurrentShape();
 }
-
-void ContainerRoom::registerToScene(QGraphicsScene* scene)
-{
-    AbstractRoom::registerToScene(scene);
-    for (AbstractRoom* room: _children)
-    {
-        qDebug() << "registering";
-
-        room->registerToScene(scene);
-    }
-}
-
-bool ContainerRoom::intersectsWith(const AbstractRoom* other) const
-{
-//    qDebug() << "checking intersection";
-//    qDebug() << this->_horizontalSpan << this->_verticalSpan;
-//    qDebug() << other->_horizontalSpan << other->_verticalSpan;
-//    if (AbstractRoom::intersectsWith(other)) { return true; }
-//    for (const AbstractRoom* room: _children)
-//    {
-//        if (room->intersectsWith(other))
-//        {
-//            return true;
-//        }
-//    }
-    return false;
-}

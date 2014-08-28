@@ -19,8 +19,6 @@ public:
         ContainerRoom::attach(p1, p2, parent);
     }
 
-    virtual void registerToScene(QGraphicsScene* scene);
-
 protected:
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape();
