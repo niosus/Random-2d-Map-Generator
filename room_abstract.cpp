@@ -16,16 +16,17 @@ const QString AbstractRoom::WALL_TOP = "wt";
 const QString AbstractRoom::WALL_LEFT = "wl";
 const QString AbstractRoom::WALL_RIGHT = "wr";
 
-AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
+AbstractRoom::AbstractRoom(
+        qreal xSize,
+        qreal ySize)
 {
-    _parent = NULL;
     _color = Qt::black;
     _penWidth = 5;
     _corners[LB] = QPointF(0, 0);
     _corners[RT] = _corners[LB] + QPointF(xSize, -ySize);
     _corners[LT] = _corners[LB] + QPointF(0, -ySize);
     _corners[RB] = _corners[LB] + QPointF(xSize, 0);
-
+    this->setPos(_corners[LB]);
     for (const QString& key:_corners.keys())
     {
         _allKeyPoints.append(&_corners[key]);
@@ -33,6 +34,7 @@ AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
 
     this->updateBasicShape();
     this->updateRoomSpans();
+    this->setParentItem(NULL);
 }
 
 void AbstractRoom::updateBasicShape()
@@ -106,9 +108,6 @@ void AbstractRoom::updateRoomSpans()
 
 bool AbstractRoom::intersectsWith(const AbstractRoom* other) const
 {
-    // if we are a parent of other,
-    // makes no sense to intersect
-    if (other->_parent == this) { return false; }
     // simple AABB intersection
     if (!this->intersectsSimple(other))
     {
@@ -130,7 +129,7 @@ bool AbstractRoom::intersectsWith(const AbstractRoom* other) const
 
 bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
 {
-    return this->collidesWithItem(other);
+    return this->collidesWithItem(other, Qt::IntersectsItemBoundingRect);
 }
 
 bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
@@ -162,7 +161,7 @@ bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
 void AbstractRoom::attach(
         const QPointF &p1,
         const QPointF &p2,
-        AbstractRoom *parent)
+        QGraphicsItem *parent)
 {
     // first call the base class part
     Attachable::attach(p1, p2);
@@ -172,15 +171,10 @@ void AbstractRoom::attach(
     // points have changed coordinates
     this->updateBasicShape();
 
-    //set parent
-    _parent = parent;
-
     this->updateRoomSpans();
 
-    if (!this->collidingItems().empty())
-    {
-        this->setColor(Qt::red);
-    }
+    this->setParentItem(parent);
+    this->itemChange(QGraphicsItem::ItemPositionChange, _corners[LB]);
 }
 
 // overriding attach function
@@ -239,5 +233,13 @@ QPainterPath AbstractRoom::shape() const
     polygon.append(_corners[LB]);
     path.addPolygon(polygon);
     return path;
+}
+
+QVariant AbstractRoom::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionChange && scene()) {
+        qDebug() << "position has changed";
+    }
+    return QGraphicsItem::itemChange(change, value);
 }
 

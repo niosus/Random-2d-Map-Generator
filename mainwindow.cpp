@@ -28,6 +28,9 @@ void MainWindow::populateScene()
     scene = new QGraphicsScene;
     // Populate scene
     ContainerRoom* container = new SimpleCorridor(400);
+    scene->addItem(container);
+    container->attach(QPointF(2,2), QPointF(1,1), NULL);
+
 //    container->addConnector("wl", 0.2);
 //    container->addConnector("wl", 0.7);
 //    container->addConnector("wb", 0);
@@ -60,19 +63,5 @@ void MainWindow::populateScene()
     container->addRoomsToConnectors(rooms);
     container2->addRoomsToConnectors(rooms2);
     container3->addRoomsToConnectors(rooms3);
-
-    container->attach(QPointF(2,2), QPointF(1,1));
-
-    container->registerToScene(scene);
-
-//    QList<QGraphicsItem*> inter = scene->collidingItems(container2);
-//    for (auto *item: inter)
-//    {
-//        AbstractRoom* room = dynamic_cast<AbstractRoom*>(item);
-//        if (room)
-//        {
-//            room->setColor(Qt::red);
-//        }
-//    }
 }
 

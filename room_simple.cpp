@@ -22,7 +22,7 @@ void SimpleRoom::updateCurrentShape()
 void SimpleRoom::attach(
         const QPointF &p1,
         const QPointF &p2,
-        AbstractRoom *parent)
+        QGraphicsItem* parent)
 {
     // first call the base class part
     AbstractRoom::attach(p1, p2, parent);

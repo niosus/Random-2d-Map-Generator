@@ -22,8 +22,11 @@ void SimpleCorridor::updateCurrentShape()
     // iterate through all walls
     for (const QString& tag: _basicShape.keys())
     {
-        if (_parent != NULL && tag == WALL_BOTTOM)
+        if (this->parentItem() && tag == WALL_BOTTOM)
         {
+            /// draw the bottom wall of the corridor
+            /// if the corridor is not attached to
+            /// anything with its base
             continue;
         }
         temp = _basicShape[tag].p1();

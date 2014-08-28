@@ -10,8 +10,7 @@ class AbstractRoom :
         public Attachable
 {
 public:
-    AbstractRoom(
-            qreal xSize = UNIFIED_SIZE,
+    AbstractRoom(qreal xSize = UNIFIED_SIZE,
             qreal ySize = UNIFIED_SIZE);
     virtual ~AbstractRoom() { _currentShape.clear(); }
 
@@ -23,17 +22,12 @@ public:
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
-            AbstractRoom* parent = NULL);
+            QGraphicsItem *parent);
     virtual void detach();
 
     virtual void registerToScene(QGraphicsScene* scene);
 
     virtual bool intersectsWith(const AbstractRoom* other) const;
-
-    inline AbstractRoom* parent() const
-    {
-        return _parent;
-    }
 
     void setColor(QColor color) { _color = color; }
 
@@ -45,6 +39,8 @@ public:
 
     // TODO: has to redefine the shape as a polygon and then we can check for collisions in the pre-build way
     virtual QPainterPath shape() const;
+
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 protected:
     // a function to update the shape to be drawn by paint()
@@ -99,10 +95,6 @@ protected:
     // A Convenience structure to transform all the points.
     // Holds pointers to all points.
     QVector<QPointF*> _allKeyPoints;
-
-
-    // parent that this room is attached to
-    AbstractRoom* _parent;
 
 private:
     // transforms _allKeyPoints with a

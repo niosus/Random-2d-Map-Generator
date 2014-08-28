@@ -14,7 +14,7 @@ public:
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
-            AbstractRoom* parent = NULL)
+            QGraphicsItem* parent)
     {
         ContainerRoom::attach(p1, p2, parent);
     }

@@ -46,7 +46,7 @@ public:
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
-            AbstractRoom* parent = NULL);
+            QGraphicsItem *parent);
 
     virtual void registerToScene(QGraphicsScene* scene);
 
