@@ -16,6 +16,8 @@ const QString AbstractRoom::WALL_TOP = "wt";
 const QString AbstractRoom::WALL_LEFT = "wl";
 const QString AbstractRoom::WALL_RIGHT = "wr";
 
+int AbstractRoom::g_id = 0;
+
 AbstractRoom::AbstractRoom(
         qreal xSize,
         qreal ySize)
@@ -34,6 +36,8 @@ AbstractRoom::AbstractRoom(
 
     this->updateBasicShape();
     this->setParentItem(NULL);
+
+    _id = g_id++;
 }
 
 void AbstractRoom::updateBasicShape()

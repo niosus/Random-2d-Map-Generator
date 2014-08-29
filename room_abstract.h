@@ -14,6 +14,28 @@ public:
             qreal ySize = UNIFIED_SIZE);
     virtual ~AbstractRoom() { _currentShape.clear(); }
 
+    // corners' tags of the room's basic shape
+    static const QString LB;
+    static const QString RB;
+    static const QString LT;
+    static const QString RT;
+
+    /// names for walls in room frame (no transform)
+    ///       top
+    ///       ___
+    ///      |   |
+    /// left |   | right
+    ///       ---
+    ///      bottom
+    ///
+    /// The names don't correspond as shown
+    /// after the room is placed somewhere
+    static const QString WALL_BOTTOM;
+    static const QString WALL_TOP;
+    static const QString WALL_LEFT;
+    static const QString WALL_RIGHT;
+
+
     QRectF boundingRect() const;
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget);
@@ -29,6 +51,10 @@ public:
 
     // TODO: has to redefine the shape as a polygon and then we can check for collisions in the pre-build way
     virtual QPainterPath shape() const;
+
+    inline int id() const {
+        return _id;
+    }
 
 protected:
     // a function to update the shape to be drawn by paint()
@@ -63,27 +89,6 @@ protected:
     // a standart size of the room
     static const qreal UNIFIED_SIZE;
 
-    // corners' tags of the room's basic shape
-    static const QString LB;
-    static const QString RB;
-    static const QString LT;
-    static const QString RT;
-
-    /// names for walls in room frame (no transform)
-    ///       top
-    ///       ___
-    ///      |   |
-    /// left |   | right
-    ///       ---
-    ///      bottom
-    ///
-    /// The names don't correspond as shown
-    /// after the room is placed somewhere
-    static const QString WALL_BOTTOM;
-    static const QString WALL_TOP;
-    static const QString WALL_LEFT;
-    static const QString WALL_RIGHT;
-
     // A Convenience structure to transform all the points.
     // Holds pointers to all points.
     QVector<QPointF*> _allKeyPoints;
@@ -95,6 +100,9 @@ private:
     void updateBasicShape();
     // get bounds
     void getMinMax(QPointF& pMin, QPointF& pMax) const;
+
+    static int g_id;
+    int _id;
 };
 
 #endif // TEST_RECT_H

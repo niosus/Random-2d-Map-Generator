@@ -4,12 +4,12 @@
 #include <QPointF>
 #include <QLineF>
 #include <QString>
+#include <QDebug>
 
 class Connector
 {
 public:
-    Connector(
-            const QLineF &parentLine,
+    Connector(QLineF *parentLine,
             const QString& parentLineTag,
             const qreal &startOffset,
             const qreal &connectorSize);
@@ -17,7 +17,7 @@ public:
     QPointF first();
     QPointF second();
 
-    void updateParentLine(const QLineF &parentLine);
+    void updateParentLine(QLineF *parentLine);
 
     bool intersectsWith(const Connector *other);
 
@@ -26,12 +26,27 @@ public:
         return _parentLineTag;
     }
 
+    inline bool isValid() const
+    {
+        if (_startOffset > _endOffset) { return false; }
+        if (_startOffset < 0 || _endOffset > 1.000001) { return false; }
+        return true;
+    }
+
+    inline int id() const
+    {
+        return _current_id;
+    }
+
 private:
-    QLineF _parentLine;
+    QLineF* _parentLine;
 
     qreal _startOffset;
     qreal _endOffset;
     QString _parentLineTag;
+
+    int _current_id;
+    static int _global_id;
 };
 
 #endif // CONNECTOR_H

@@ -1,9 +1,9 @@
-#include "test_wall.h"
+#include "test_connector.h"
 
 int main(int argc, char *argv[])
 {
-    TestWall testWall;
-    QTest::qExec(&testWall, argc, argv);
+    TestConnector testConnector;
+    QTest::qExec(&testConnector, argc, argv);
 
     return 0;
 }

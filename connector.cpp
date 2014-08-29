@@ -3,8 +3,10 @@
 
 using namespace std;
 
+int Connector::_global_id = 0;
+
 Connector::Connector(
-        const QLineF& parentLine,
+        QLineF* parentLine,
         const QString& parentLineTag,
         const qreal &startOffset,
         const qreal &connectorSize)
@@ -12,21 +14,22 @@ Connector::Connector(
     _parentLineTag = parentLineTag;
     _parentLine = parentLine;
     _startOffset = startOffset;
-    qreal dOffset = connectorSize / parentLine.length();
+    qreal dOffset = connectorSize / parentLine->length();
     _endOffset = startOffset + dOffset;
+    _current_id = _global_id++;
 }
 
 QPointF Connector::first()
 {
-    return _parentLine.pointAt(_startOffset);
+    return _parentLine->pointAt(_startOffset);
 }
 
 QPointF Connector::second()
 {
-    return _parentLine.pointAt(_endOffset);
+    return _parentLine->pointAt(_endOffset);
 }
 
-void Connector::updateParentLine(const QLineF &parentLine)
+void Connector::updateParentLine(QLineF *parentLine)
 {
     _parentLine = parentLine;
 }

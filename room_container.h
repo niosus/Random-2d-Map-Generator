@@ -9,6 +9,9 @@
 class ContainerRoom : public AbstractRoom
 {
 public:
+    const static int CANNOT_ADD_CONNECTOR = -10;
+    const static int CANNOT_ADD_ROOM = -11;
+
     ContainerRoom(
             const qreal &xSize,
             const qreal &ySize);
@@ -24,17 +27,23 @@ public:
 
     inline int currentFreeConnectors()
     {
-        return _connectors.size() - _children.size();
+        return _connectors.size() - _attachedRooms.size();
     }
 
-    // adds a connector to the specified line at the distance of
-    // connector.pos = lineFraction * line.length;
-    // @param lineTag       --> tag of the line to add connector to;
-    // @param lineFraction  --> double from [0,1] as fraction of line length;
-    // example in pseudo-code:
-    // addConnector(line({1,1} --> {2,2}), 0.5) will add a connector
-    // to position {1.5, 1.5}
-    void addConnector(const QString &lineTag, const qreal &lineFraction);
+    /// adds a connector to the specified line at the distance of
+    /// connector.pos = lineFraction * line.length;
+    /// @param lineTag       --> tag of the line to add connector to;
+    /// @param lineFraction  --> double from [0,1] as fraction of line length;
+    /// example in pseudo-code:
+    /// addConnector(line({1,1} --> {2,2}), 0.5) will add a connector
+    /// to position {1.5, 1.5}
+    /// @return connector id if succeded, ERROR otherwise
+    int addConnector(const QString &lineTag, const qreal &lineFraction);
+
+    void removeEmptyConnector(
+            const int id,
+            const QString &lineTag,
+            const qreal &lineFraction);
 
     void addRoomsToConnectors(const QVector<AbstractRoom*>& rooms);
 
@@ -42,12 +51,23 @@ public:
 
     void updateConnectorPositions();
 
-    // overriding the function attach
+    /// overriding the function attach
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
             QGraphicsItem *parent);
+
+    int addRoom(
+            const QString &lineTag,
+            const qreal &lineFraction,
+            AbstractRoom* room);
+
+    int addRoomToConnector(const int connectorId, AbstractRoom* room);
 protected:
+    enum ConnectorState {
+        FREE = 10,
+        OCCUPIED = 11
+    };
 
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape();
@@ -56,9 +76,14 @@ protected:
 
     qreal _xSize;
     qreal _ySize;
-    QVector<AbstractRoom*> _children;
-    QVector<Connector*> _connectors;
+    QMap<int, ConnectorState> _connectorStates;
+    QHash<int, AbstractRoom *> _attachedRooms;
+    QHash<int, Connector *> _connectors;
     QHash<QString, QMap<qreal, Connector*> > _connectorsPos;
+
+    /// <id_room> <id_connector> means that room is connected
+    /// to the connector with corresponding ids.
+    QHash<int, int> _roomConnectorPairs;
 
 private:
     bool overlapsOtherConnectors(

@@ -22,8 +22,8 @@ SOURCES += main.cpp \
     corridor_simple.cpp \
     room_container.cpp \
     view_maze.cpp \
-    wall.cpp \
-    wall_builder.cpp
+    room_builder.cpp \
+    corridor_random.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
@@ -33,8 +33,8 @@ HEADERS  += mainwindow.h \
     corridor_simple.h \
     room_container.h \
     view_maze.h \
-    wall.h \
-    wall_builder.h
+    room_builder.h \
+    corridor_random.h
 
 test {
     message(Test build)
@@ -42,11 +42,13 @@ test {
 
     SOURCES -= main.cpp
 
-    HEADERS += test/test_wall.h \
-            test/test_attachable.h
+    HEADERS += \
+            test/test_attachable.h \
+            test/test_connector.h
 
-    SOURCES += test/test_wall.cpp \
+    SOURCES += \
             test/test_attachable.cpp \
+            test/test_connector.cpp \
             test/test_main.cpp
 } else {
     message(Normal build)

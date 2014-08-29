@@ -15,18 +15,18 @@ ContainerRoom::ContainerRoom(
 
 ContainerRoom::~ContainerRoom()
 {
-    for (Attachable* attachable: _children)
+    for (AbstractRoom* attachable: _attachedRooms.values())
     {
         attachable->detach();
         delete attachable;
         attachable = NULL;
     }
-    for (Connector* connector: _connectors)
+    for (Connector* connector: _connectors.values())
     {
         delete connector;
         connector = NULL;
     }
-    _children.clear();
+    _attachedRooms.clear();
     _connectors.clear();
 }
 
@@ -53,28 +53,88 @@ bool ContainerRoom::overlapsOtherConnectors(
     return false;
 }
 
-void ContainerRoom::addConnector(const QString &lineTag, const qreal &lineFraction)
+int ContainerRoom::addRoom(
+        const QString &lineTag,
+        const qreal &lineFraction,
+        AbstractRoom* room)
+{
+    int connectorId = this->addConnector(lineTag, lineFraction);
+    if (connectorId == CANNOT_ADD_CONNECTOR) {
+        return CANNOT_ADD_CONNECTOR;
+    }
+    int roomId = this->addRoomToConnector(connectorId, room);
+    if (roomId == CANNOT_ADD_ROOM)
+    {
+        this->removeEmptyConnector(connectorId, lineTag, lineFraction);
+        return CANNOT_ADD_ROOM;
+    }
+    return roomId;
+}
+
+void ContainerRoom::removeEmptyConnector(
+        const int id,
+        const QString &lineTag,
+        const qreal &lineFraction)
+{
+    /// @todo this is ugly
+    /// think of a better way to handle connectors
+    /// or maybe even rooms as whole
+    _connectorsPos[lineTag].remove(lineFraction);
+    _connectorStates.remove(id);
+    delete _connectors[id];
+    _connectors.remove(id);
+}
+
+int ContainerRoom::addRoomToConnector(const int connectorId, AbstractRoom* room)
+{
+    if (_connectorStates[connectorId] != FREE) {
+        qDebug() << "trying to add to a connector that is not free or doesn't exist";
+        return CANNOT_ADD_ROOM;
+    }
+    _connectorStates.remove(connectorId);
+    _roomConnectorPairs[room->id()] = connectorId;
+    _attachedRooms[room->id()] = room;
+    room->attach(
+                _connectors[connectorId]->first(),
+                _connectors[connectorId]->second(),
+                this);
+    return room->id();
+}
+
+int ContainerRoom::addConnector(const QString &lineTag, const qreal &lineFraction)
 {
     Connector *connector = new Connector(
-                _basicShape[lineTag],
+                &_basicShape[lineTag],
                 lineTag,
                 lineFraction,
                 UNIFIED_SIZE);
-    if (overlapsOtherConnectors(connector, lineTag)) { return; }
+    // check if we are overlapping any other connectors along the line
+    if (overlapsOtherConnectors(connector, lineTag)) {
+        return CANNOT_ADD_CONNECTOR;
+    }
+    if (!connector->isValid()) {
+        /// Something is wrong with the connector
+        return CANNOT_ADD_CONNECTOR;
+    }
 
     // push the connector to vector
-    _connectors.push_back(connector);
+    _connectors.insert(connector->id(), connector);
 
     // add the connector
     _connectorsPos[lineTag].insert(lineFraction, connector);
 
+    // mark a connector as free
+    _connectorStates[connector->id()] = FREE;
+
     updateCurrentShape();
+
+    return connector->id();
 }
 
 void ContainerRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     AbstractRoom::paint(painter,option, widget);
-    for (AbstractRoom* room: _children)
+    for (AbstractRoom* room: _attachedRooms.values())
     {
         room->paint(painter, option, widget);
     }
@@ -104,14 +164,11 @@ void ContainerRoom::updateCurrentShape()
 
 void ContainerRoom::reattachChildren()
 {
-    int size = _children.size();
-    for (int i = 0; i < size; ++i)
+    for (AbstractRoom *room: _attachedRooms.values())
     {
-        qDebug() << "attaching child " << i;
-        _children[i]->attach(
-                    _connectors[i]->first(),
-                    _connectors[i]->second(),
-                    this);
+        int connectorId = _roomConnectorPairs[room->id()];
+        Connector* connector = _connectors[connectorId];
+        room->attach(connector->first(), connector->second(), this);
     }
 }
 
@@ -121,23 +178,27 @@ void ContainerRoom::addRoomsToConnectors(const QVector<AbstractRoom*>& rooms)
     {
         qDebug() << "we got more elements than we can store, will skip some of them";
     }
-    int size = std::min(rooms.size(), currentFreeConnectors());
+    int size = std::min(rooms.size(), _connectorStates.size());
+    int connectorId = -1;
     for (int i = 0; i < size; ++i)
     {
+        connectorId = _connectorStates.keys().back();
+        _connectorStates.remove(connectorId);
+        _roomConnectorPairs[rooms[i]->id()] = connectorId;
+        _attachedRooms[rooms[i]->id()] = rooms[i];
         rooms[i]->attach(
-                    _connectors[i]->first(),
-                    _connectors[i]->second(),
+                    _connectors[connectorId]->first(),
+                    _connectors[connectorId]->second(),
                     this);
-        _children.append(rooms[i]);
     }
 }
 
 void ContainerRoom::updateConnectorPositions()
 {
-    for (Connector* connector: _connectors)
+    for (Connector* connector: _connectors.values())
     {
-        // this is needed to tell connector where it is in the world
-        connector->updateParentLine(_basicShape[connector->parentLineTag()]);
+        // tell connector where it is in the world
+        connector->updateParentLine(&_basicShape[connector->parentLineTag()]);
     }
 }
 
