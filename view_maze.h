@@ -10,6 +10,7 @@ public:
     ViewMaze(QWidget *v = NULL) : QGraphicsView(v)
     {
         setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     }
 
 protected:
