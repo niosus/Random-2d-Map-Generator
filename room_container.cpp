@@ -122,17 +122,12 @@ void ContainerRoom::addRoomsToConnectors(const QVector<AbstractRoom*>& rooms)
         qDebug() << "we got more elements than we can store, will skip some of them";
     }
     int size = std::min(rooms.size(), currentFreeConnectors());
-    AbstractRoom* root = findRoot();
     for (int i = 0; i < size; ++i)
     {
         rooms[i]->attach(
                     _connectors[i]->first(),
                     _connectors[i]->second(),
                     this);
-        if (root->intersectsWith(rooms[i]))
-        {
-            rooms[i]->setColor(Qt::red);
-        }
         _children.append(rooms[i]);
     }
 }
@@ -150,55 +145,10 @@ void ContainerRoom::updateConnectorPositions()
 void ContainerRoom::attach(
         const QPointF &p1,
         const QPointF &p2,
-        AbstractRoom *parent)
+        QGraphicsItem* parent)
 {
     AbstractRoom::attach(p1, p2, parent);
     this->updateConnectorPositions();
     this->reattachChildren();
     this->updateCurrentShape();
-
-    AbstractRoom* root = findRoot();
-    for (AbstractRoom* room: _children)
-    {
-        if (root->intersectsWith(room))
-        {
-            room->setColor(Qt::red);
-        }
-    }
-}
-
-void ContainerRoom::registerToScene(QGraphicsScene* scene)
-{
-    AbstractRoom::registerToScene(scene);
-    for (AbstractRoom* room: _children)
-    {
-        qDebug() << "registering";
-        room->registerToScene(scene);
-    }
-}
-
-AbstractRoom* ContainerRoom::findRoot()
-{
-    AbstractRoom* root = this;
-    while(root->parent())
-    {
-        root = root->parent();
-    }
-    return root;
-}
-
-bool ContainerRoom::intersectsWith(const AbstractRoom* other) const
-{
-//    qDebug() << "checking intersection";
-//    qDebug() << this->_horizontalSpan << this->_verticalSpan;
-//    qDebug() << other->_horizontalSpan << other->_verticalSpan;
-//    if (AbstractRoom::intersectsWith(other)) { return true; }
-//    for (const AbstractRoom* room: _children)
-//    {
-//        if (room->intersectsWith(other))
-//        {
-//            return true;
-//        }
-//    }
-    return false;
 }

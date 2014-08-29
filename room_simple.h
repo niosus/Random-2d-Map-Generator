@@ -15,7 +15,7 @@ public:
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
-            AbstractRoom* parent = NULL);
+            QGraphicsItem *parent);
 
 protected:
     // this function needs to be defined to override the drawn shape

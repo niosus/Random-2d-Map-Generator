@@ -46,13 +46,7 @@ public:
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
-            AbstractRoom* parent = NULL);
-
-    virtual void registerToScene(QGraphicsScene* scene);
-
-    // override intersection mechanism as it needs
-    // to be triggered for children also
-    virtual bool intersectsWith(const AbstractRoom* other) const;
+            QGraphicsItem *parent);
 protected:
 
     // a function to update the shape to be drawn by paint()

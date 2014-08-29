@@ -10,8 +10,7 @@ class AbstractRoom :
         public Attachable
 {
 public:
-    AbstractRoom(
-            qreal xSize = UNIFIED_SIZE,
+    AbstractRoom(qreal xSize = UNIFIED_SIZE,
             qreal ySize = UNIFIED_SIZE);
     virtual ~AbstractRoom() { _currentShape.clear(); }
 
@@ -23,27 +22,13 @@ public:
     virtual void attach(
             const QPointF &p1,
             const QPointF &p2,
-            AbstractRoom* parent = NULL);
+            QGraphicsItem *parent);
     virtual void detach();
-
-    virtual void registerToScene(QGraphicsScene* scene);
-
-    virtual bool intersectsWith(const AbstractRoom* other) const;
-
-    inline AbstractRoom* parent() const
-    {
-        return _parent;
-    }
 
     void setColor(QColor color) { _color = color; }
 
-
-    // span of the room along axes needed
-    // for intersecting with others
-    QPair<qreal, qreal> _horizontalSpan;
-    QPair<qreal, qreal> _verticalSpan;
-
     // TODO: has to redefine the shape as a polygon and then we can check for collisions in the pre-build way
+    virtual QPainterPath shape() const;
 
 protected:
     // a function to update the shape to be drawn by paint()
@@ -52,6 +37,10 @@ protected:
     virtual bool intersectsSimple(const AbstractRoom* other) const;
 
     virtual bool intersectsPrecise(const AbstractRoom* other) const;
+
+    virtual bool intersectsWithAnyInScene() const;
+
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     // corners of the room's basic shape
     QHash<QString, QPointF> _corners;
@@ -80,7 +69,16 @@ protected:
     static const QString LT;
     static const QString RT;
 
-    // names for walls in room frame (no transform)
+    /// names for walls in room frame (no transform)
+    ///       top
+    ///       ___
+    ///      |   |
+    /// left |   | right
+    ///       ---
+    ///      bottom
+    ///
+    /// The names don't correspond as shown
+    /// after the room is placed somewhere
     static const QString WALL_BOTTOM;
     static const QString WALL_TOP;
     static const QString WALL_LEFT;
@@ -90,17 +88,11 @@ protected:
     // Holds pointers to all points.
     QVector<QPointF*> _allKeyPoints;
 
-
-    // parent that this room is attached to
-    AbstractRoom* _parent;
-
 private:
     // transforms _allKeyPoints with a
     // given transform when the room gets attached
     void transform();
     void updateBasicShape();
-    // needed for coarse intersection;
-    void updateRoomSpans();
     // get bounds
     void getMinMax(QPointF& pMin, QPointF& pMax) const;
 };

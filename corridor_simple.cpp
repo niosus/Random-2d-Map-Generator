@@ -5,12 +5,6 @@
 SimpleCorridor::SimpleCorridor(const qreal &length, const qreal &width)
     :ContainerRoom(width, length) {}
 
-
-void SimpleCorridor::registerToScene(QGraphicsScene* scene)
-{
-    ContainerRoom::registerToScene(scene);
-}
-
 // Accounts for missing parts at connectors.
 void SimpleCorridor::updateCurrentShape()
 {
@@ -22,8 +16,11 @@ void SimpleCorridor::updateCurrentShape()
     // iterate through all walls
     for (const QString& tag: _basicShape.keys())
     {
-        if (_parent != NULL && tag == WALL_BOTTOM)
+        if (this->parentItem() && tag == WALL_BOTTOM)
         {
+            /// draw the bottom wall of the corridor
+            /// if the corridor is not attached to
+            /// anything with its base
             continue;
         }
         temp = _basicShape[tag].p1();

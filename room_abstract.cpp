@@ -16,23 +16,24 @@ const QString AbstractRoom::WALL_TOP = "wt";
 const QString AbstractRoom::WALL_LEFT = "wl";
 const QString AbstractRoom::WALL_RIGHT = "wr";
 
-AbstractRoom::AbstractRoom(qreal xSize, qreal ySize)
+AbstractRoom::AbstractRoom(
+        qreal xSize,
+        qreal ySize)
 {
-    _parent = NULL;
     _color = Qt::black;
     _penWidth = 5;
     _corners[LB] = QPointF(0, 0);
     _corners[RT] = _corners[LB] + QPointF(xSize, -ySize);
     _corners[LT] = _corners[LB] + QPointF(0, -ySize);
     _corners[RB] = _corners[LB] + QPointF(xSize, 0);
-
+    this->setPos(_corners[LB]);
     for (const QString& key:_corners.keys())
     {
         _allKeyPoints.append(&_corners[key]);
     }
 
     this->updateBasicShape();
-    this->updateRoomSpans();
+    this->setParentItem(NULL);
 }
 
 void AbstractRoom::updateBasicShape()
@@ -92,61 +93,24 @@ void AbstractRoom::transform()
     }
 }
 
-void AbstractRoom::updateRoomSpans()
-{
-    QPointF maxPoint(SMALL_NUM, SMALL_NUM);
-    QPointF minPoint(BIG_NUM, BIG_NUM);
-    getMinMax(minPoint, maxPoint);
-    _horizontalSpan.first = minPoint.x();
-    _horizontalSpan.second = maxPoint.x();
-    _verticalSpan.first = minPoint.y();
-    _verticalSpan.second = maxPoint.y();
-    qDebug() << _horizontalSpan << _verticalSpan;
-}
-
-bool AbstractRoom::intersectsWith(const AbstractRoom* other) const
-{
-    // if we are a parent of other,
-    // makes no sense to intersect
-    if (other->_parent == this) { return false; }
-    // simple AABB intersection
-    if (!this->intersectsSimple(other))
-    {
-        // even the simple coarse intersection
-        // did not trigger, so no intersection.
-        return false;
-    }
-    // intersects coarsely, so let's check
-    // if precise intersection works
-    if (this->intersectsPrecise(other))
-    {
-        // yes, they do intersect indeed
-        return true;
-    }
-    // their bounding boxes intersect,
-    // but not the actual objects
-    return false;
-}
-
 bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
 {
-    if (other->_horizontalSpan.first < other->_horizontalSpan.second
-            && other->_horizontalSpan.second > other->_horizontalSpan.first)
-    {
-        return true;
-    }
-    return false;
+    return this->collidesWithItem(other, Qt::IntersectsItemBoundingRect);
 }
 
 bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
 {
+    if (this == other->parentItem()
+            || other == this->parentItem()) {
+        /// these two have a healthy relationship
+        /// they are allowed to touch each other and
+        /// this doesn't cause a collision
+        return false;
+    }
     QPointF* dummy = NULL;
-    for (const QLineF& line: _basicShape.values())
-    {
-        for (const QLineF& lineOther: other->_basicShape.values())
-        {
-            if(line.intersect(lineOther, dummy) == QLineF::BoundedIntersection)
-            {
+    for (const QLineF& line: _basicShape.values()) {
+        for (const QLineF& lineOther: other->_basicShape.values()) {
+            if(line.intersect(lineOther, dummy) == QLineF::BoundedIntersection) {
                 return true;
             }
         }
@@ -158,7 +122,7 @@ bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
 void AbstractRoom::attach(
         const QPointF &p1,
         const QPointF &p2,
-        AbstractRoom *parent)
+        QGraphicsItem *parent)
 {
     // first call the base class part
     Attachable::attach(p1, p2);
@@ -168,10 +132,8 @@ void AbstractRoom::attach(
     // points have changed coordinates
     this->updateBasicShape();
 
-    //set parent
-    _parent = parent;
-
-    this->updateRoomSpans();
+    this->setParentItem(parent);
+    this->itemChange(QGraphicsItem::ItemPositionChange, p1);
 }
 
 // overriding attach function
@@ -194,8 +156,40 @@ void AbstractRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setBrush(b);
 }
 
-void AbstractRoom::registerToScene(QGraphicsScene* scene)
+QPainterPath AbstractRoom::shape() const
 {
-    scene->addItem(this);
+    QPainterPath path;
+    QPolygonF polygon;
+    polygon.append(_corners[LB]);
+    polygon.append(_corners[LT]);
+    polygon.append(_corners[RT]);
+    polygon.append(_corners[RB]);
+    polygon.append(_corners[LB]);
+    path.addPolygon(polygon);
+    return path;
+}
+
+bool AbstractRoom::intersectsWithAnyInScene() const
+{
+    QList<QGraphicsItem *> items = this->collidingItems(Qt::IntersectsItemBoundingRect);
+    for (QGraphicsItem * item: items)
+    {
+        AbstractRoom * room = dynamic_cast<AbstractRoom *>(item);
+        if (!room) { continue; }
+        if (room->intersectsPrecise(this)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+QVariant AbstractRoom::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionChange && scene()) {
+        if (this->intersectsWithAnyInScene()) {
+            this->setColor(Qt::red);
+        }
+    }
+    return QGraphicsItem::itemChange(change, value);
 }
 
