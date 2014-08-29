@@ -3,10 +3,10 @@
 
 #include "corridor_simple.h"
 
-class CorridorRandom: public SimpleCorridor
+class RandomCorridor: public SimpleCorridor
 {
 public:
-    CorridorRandom(const qreal &length,
+    RandomCorridor(const qreal &length,
                    const qreal &width = UNIFIED_SIZE);
 };
 

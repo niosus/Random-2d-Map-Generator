@@ -3,6 +3,7 @@
 #include "room_simple.h"
 #include "room_container.h"
 #include "corridor_simple.h"
+#include "corridor_random.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -27,12 +28,9 @@ void MainWindow::populateScene()
 {
     scene = new QGraphicsScene;
     // Populate scene
-    ContainerRoom* container = new SimpleCorridor(400, 400);
+    ContainerRoom* container = new RandomCorridor(700);
     scene->addItem(container);
-    ContainerRoom* container2 = new SimpleCorridor(400);
-    container2->addRoom(AbstractRoom::WALL_LEFT, 0.2, new SimpleRoom);
     container->attach(QPointF(2,2), QPointF(1,1), NULL);
-    container->addRoom(AbstractRoom::WALL_LEFT, 0.2, container2);
 
 //    container->addConnector("wl", 0.2);
 //    container->addConnector("wl", 0.7);
