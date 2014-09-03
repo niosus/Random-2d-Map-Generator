@@ -12,7 +12,8 @@ public:
         RANDOM_CORRIDOR
     };
 
-    static AbstractRoom* buildNewRoom(const RoomType type);
+    static AbstractRoom* buildNewRoom(const RoomType type,
+                                      const bool dominant = true);
 
     RoomBuilder();
 };

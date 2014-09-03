@@ -76,6 +76,9 @@
 Random
 Environment</string>
       </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item row="6" column="1">

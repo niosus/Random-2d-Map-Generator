@@ -7,7 +7,7 @@ RoomBuilder::RoomBuilder()
 {
 }
 
-AbstractRoom* RoomBuilder::buildNewRoom(const RoomType type)
+AbstractRoom* RoomBuilder::buildNewRoom(const RoomType type, const bool dominant)
 {
     switch (type) {
     case SIMPLE_ROOM:
@@ -15,7 +15,7 @@ AbstractRoom* RoomBuilder::buildNewRoom(const RoomType type)
     case SIMPLE_CORRIDOR:
         return new SimpleCorridor(500);
     case RANDOM_CORRIDOR:
-        return new RandomCorridor(500);
+        return new RandomCorridor(500, 100, dominant);
     default:
         return NULL;
     }

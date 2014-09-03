@@ -16,8 +16,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_btnGenerateRandom_clicked();
+
 private:
     void populateScene();
+    void generate();
 
     QGraphicsScene *scene;
     Ui::MainWindow *ui;
