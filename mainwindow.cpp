@@ -36,8 +36,19 @@ void MainWindow::generate()
         qDebug() << "ERROR: Something is wrong with casting a room";
     }
     scene->addItem(container);
-    container->attach(QPointF(2,2), QPointF(1,1), NULL);
-    ui->graphicsView->setScene(scene);
+    container->attach(QPointF(100,100), QPointF(100,101), NULL);
+    for (QGraphicsItem *item: scene->items()) {
+        AbstractRoom* room = dynamic_cast<AbstractRoom*>(item);
+        if (room) {
+            if (room->intersectsWithAnyInScene()) {
+                room->setColor(Qt::red);
+                ContainerRoom* containerRoom = dynamic_cast<ContainerRoom*>(room->parentItem());
+                if (containerRoom) {
+                    containerRoom->removeRoom(room->id());
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::populateScene()
@@ -58,5 +69,6 @@ void MainWindow::on_btnGenerateRandom_clicked()
     scene->clear();
     scene->update();
     AbstractRoom::reInitIds();
+    RoomBuilder::reInit();
     generate();
 }

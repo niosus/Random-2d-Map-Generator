@@ -7,8 +7,7 @@ class RandomCorridor: public SimpleCorridor
 {
 public:
     RandomCorridor(const qreal &length,
-                   const qreal &width = UNIFIED_SIZE,
-                   int numOfRandomCorridorsTillNow = 0);
+                   const qreal &width = UNIFIED_SIZE);
 
 protected:
 

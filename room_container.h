@@ -77,6 +77,8 @@ public:
             const qreal &lineFraction,
             AbstractRoom* room);
 
+    void removeRoom(const int roomId);
+
     int addRoomToConnector(const int connectorId, AbstractRoom* room);
 protected:
     enum ConnectorState {

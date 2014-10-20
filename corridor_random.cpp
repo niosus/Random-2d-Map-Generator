@@ -5,12 +5,11 @@
 #include <QDebug>
 
 RandomCorridor::RandomCorridor(const qreal &length,
-        const qreal &width,
-        int numOfRandomCorridorsTillNow)
+        const qreal &width)
     :SimpleCorridor(length, width)
 {
     int i = 0;
-    while (++i < this->holdingCapacity() / 2) {
+    while (i++ < this->holdingCapacity() / 2) {
         qDebug() << "i: " << i;
         int randType = qrand()%100;
         RoomBuilder::RoomType type;
@@ -42,7 +41,7 @@ RandomCorridor::RandomCorridor(const qreal &length,
 
         qreal frac = qrand() / (qreal) RAND_MAX;
         int resultCode = this->addRoom(wallType, frac,
-                      RoomBuilder::buildNewRoom(type, numOfRandomCorridorsTillNow));
+                      RoomBuilder::buildNewRoom(type));
 
         // if we failed to add a room, we want to try again
         if (resultCode == CANNOT_ADD_ROOM ||

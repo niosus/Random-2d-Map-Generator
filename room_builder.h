@@ -12,13 +12,15 @@ public:
         RANDOM_CORRIDOR
     };
 
-    static AbstractRoom* buildNewRoom(const RoomType type,
-                                      int numOfRandomCorridors = true);
+    static void reInit();
+
+    static AbstractRoom* buildNewRoom(const RoomType type);
 
     RoomBuilder();
 
 private:
     static const int MAX_ALLOWED_RAND_CORRIDORS = 5;
+    static int g_numberOfRandomCorridors;
 };
 
 #endif // ROOM_BUILDER_H

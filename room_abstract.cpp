@@ -36,7 +36,6 @@ AbstractRoom::AbstractRoom(
 
     this->updateBasicShape();
     this->setParentItem(NULL);
-
     _id = g_id++;
 }
 
@@ -79,10 +78,7 @@ QRectF AbstractRoom::boundingRect() const
     QPointF maxPoint(SMALL_NUM, SMALL_NUM);
     QPointF minPoint(BIG_NUM, BIG_NUM);
     getMinMax(minPoint, maxPoint);
-    QPointF size = maxPoint-minPoint;
-    size.setX(fabs(size.x()) + 50);
-    size.setY(fabs(size.y()) + 50);
-    return QRectF(minPoint, size);
+    return QRectF(minPoint, maxPoint);
 }
 
 void AbstractRoom::transform()
@@ -99,7 +95,10 @@ void AbstractRoom::transform()
 
 bool AbstractRoom::intersectsSimple(const AbstractRoom* other) const
 {
-    return this->collidesWithItem(other, Qt::IntersectsItemBoundingRect);
+    if (this->boundingRect().intersects(other->boundingRect())) {
+        return true;
+    }
+    return false;
 }
 
 bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
@@ -136,14 +135,16 @@ void AbstractRoom::attach(
     // points have changed coordinates
     this->updateBasicShape();
 
+//    this->itemChange(QGraphicsItem::ItemPositionChange, p1);
+
     qDebug() << "setting parrent for room" << this->id();
     this->setParentItem(parent);
-    this->itemChange(QGraphicsItem::ItemPositionChange, p1);
 }
 
 // overriding detach function
 void AbstractRoom::detach()
 {
+    this->setColor(Qt::red);
     _currentShape.clear();
 }
 
@@ -176,17 +177,17 @@ QPainterPath AbstractRoom::shape() const
     return path;
 }
 
-bool AbstractRoom::intersectsWithAnyInScene() const
+int AbstractRoom::intersectsWithAnyInScene() const
 {
-    QList<QGraphicsItem *> items = this->collidingItems(Qt::IntersectsItemBoundingRect);
+    int intersections = 0;
+    QList<QGraphicsItem *> items = this->collidingItems(Qt::IntersectsItemShape);
     for (QGraphicsItem * item: items)
     {
         AbstractRoom * room = dynamic_cast<AbstractRoom *>(item);
         if (!room) { continue; }
         if (room->intersectsPrecise(this)) {
-            return true;
+            intersections++;
         }
     }
-    return false;
+    return intersections;
 }
-

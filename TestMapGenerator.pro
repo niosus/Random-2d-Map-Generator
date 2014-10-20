@@ -38,6 +38,9 @@ HEADERS  += mainwindow.h \
 
 test {
     message(Test build)
+
+
+    QT += testlib
     TARGET = UnitTests
 
     SOURCES -= main.cpp
@@ -56,4 +59,3 @@ test {
 
 FORMS    += mainwindow.ui
 
-QT += testlib

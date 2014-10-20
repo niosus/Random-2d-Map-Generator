@@ -45,6 +45,7 @@ public:
             const QPointF &p1,
             const QPointF &p2,
             QGraphicsItem *parent);
+
     virtual void detach();
 
     void setColor(QColor color) { _color = color; }
@@ -60,7 +61,9 @@ public:
         return IMPORTANCE_WEIGHT;
     }
 
-    virtual bool intersectsWithAnyInScene() const;
+    virtual int intersectsWithAnyInScene() const;
+
+    virtual bool intersectsPrecise(const AbstractRoom* other) const;
 
     static void reInitIds() {
         g_id = 0;
@@ -75,7 +78,6 @@ protected:
 
     virtual bool intersectsSimple(const AbstractRoom* other) const;
 
-    virtual bool intersectsPrecise(const AbstractRoom* other) const;
 
     // corners of the room's basic shape
     QHash<QString, QPointF> _corners;

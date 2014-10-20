@@ -1,6 +1,7 @@
 #include <qmath.h>
 #include <QVector2D>
 #include <QDebug>
+#include <QGraphicsScene>
 #include "room_container.h"
 
 ContainerRoom::ContainerRoom(
@@ -28,6 +29,7 @@ ContainerRoom::~ContainerRoom()
     }
     _attachedRooms.clear();
     _connectors.clear();
+    _connectorPosById.clear();
 }
 
 int ContainerRoom::holdingCapacity()
@@ -69,6 +71,15 @@ int ContainerRoom::addRoom(
         return CANNOT_ADD_ROOM;
     }
     return roomId;
+}
+
+void ContainerRoom::removeRoom(const int roomId) {
+    delete _attachedRooms[roomId];
+    this->_attachedRooms.remove(roomId);
+    int connectorId = this->_roomConnectorPairs[roomId];
+    this->_roomConnectorPairs.remove(roomId);
+    this->removeEmptyConnector(connectorId);
+    this->updateCurrentShape();
 }
 
 int ContainerRoom::addRoomToConnector(const int connectorId, AbstractRoom* room)
@@ -150,14 +161,14 @@ void ContainerRoom::removeEmptyConnector(const int id)
     _connectorStates.remove(id);
     delete _connectors[id];
     _connectors.remove(id);
+    _connectorPosById.remove(id);
 }
 
 
 void ContainerRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     AbstractRoom::paint(painter,option, widget);
-    for (AbstractRoom* room: _attachedRooms.values())
-    {
+    for (AbstractRoom* room: _attachedRooms.values()) {
         room->paint(painter, option, widget);
     }
 }
@@ -191,14 +202,6 @@ void ContainerRoom::reattachChildren()
         int connectorId = _roomConnectorPairs[room->id()];
         Connector* connector = _connectors[connectorId];
         room->attach(connector->first(), connector->second(), this);
-        if (room->intersectsWithAnyInScene()) {
-            room->detach();
-            _attachedRooms.remove(room->id());
-            _roomConnectorPairs.remove(room->id());
-            _connectors.remove(connectorId);
-            removeEmptyConnector(connectorId);
-            delete room;
-        }
     }
 }
 
@@ -224,9 +227,8 @@ void ContainerRoom::attach(
 }
 
 void ContainerRoom::detach() {
-    for (AbstractRoom *room: _attachedRooms.values())
-    {
+    AbstractRoom::detach();
+    for (AbstractRoom *room: _attachedRooms.values()) {
         room->detach();
     }
-    AbstractRoom::detach();
 }
