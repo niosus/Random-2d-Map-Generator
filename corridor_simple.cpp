@@ -25,7 +25,7 @@ void SimpleCorridor::updateCurrentShape()
         }
         temp = _basicShape[tag].p1();
         // if wall has connectors, make that visible
-        for (Connector* connector: _connectorsPos[tag].values())
+        for (Connector* connector: _connectorsPosOnLine[tag].values())
         {
             _currentShape.append(QLineF(temp, connector->first()));
             temp = connector->second();

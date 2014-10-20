@@ -56,17 +56,26 @@ public:
         return _id;
     }
 
+    inline int importanceWeight() const {
+        return IMPORTANCE_WEIGHT;
+    }
+
+    virtual bool intersectsWithAnyInScene() const;
+
+    static void reInitIds() {
+        g_id = 0;
+    }
+
 protected:
+
+    static const int IMPORTANCE_WEIGHT = 0;
+
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape() = 0;
 
     virtual bool intersectsSimple(const AbstractRoom* other) const;
 
     virtual bool intersectsPrecise(const AbstractRoom* other) const;
-
-    virtual bool intersectsWithAnyInScene() const;
-
-    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     // corners of the room's basic shape
     QHash<QString, QPointF> _corners;

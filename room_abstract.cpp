@@ -122,7 +122,7 @@ bool AbstractRoom::intersectsPrecise(const AbstractRoom* other) const
     return false;
 }
 
-// overriding attach function
+// overriding attach functionIntersectsItemBoundingRect
 void AbstractRoom::attach(
         const QPointF &p1,
         const QPointF &p2,
@@ -136,11 +136,12 @@ void AbstractRoom::attach(
     // points have changed coordinates
     this->updateBasicShape();
 
+    qDebug() << "setting parrent for room" << this->id();
     this->setParentItem(parent);
     this->itemChange(QGraphicsItem::ItemPositionChange, p1);
 }
 
-// overriding attach function
+// overriding detach function
 void AbstractRoom::detach()
 {
     _currentShape.clear();
@@ -187,15 +188,5 @@ bool AbstractRoom::intersectsWithAnyInScene() const
         }
     }
     return false;
-}
-
-QVariant AbstractRoom::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    if (change == ItemPositionChange && scene()) {
-        if (this->intersectsWithAnyInScene()) {
-            this->setColor(Qt::red);
-        }
-    }
-    return QGraphicsItem::itemChange(change, value);
 }
 

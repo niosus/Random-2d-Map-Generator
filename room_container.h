@@ -5,6 +5,22 @@
 #include "attachable.h"
 #include "connector.h"
 
+struct ContainerPositionStruct {
+    QString _lineName;
+    qreal _lineFraction;
+
+    ContainerPositionStruct() {
+        _lineName = "NONE";
+        _lineFraction = 0;
+    }
+
+    ContainerPositionStruct(const QString& lineName, const qreal& lineFraction) {
+        _lineName = lineName;
+        _lineFraction = lineFraction;
+    }
+};
+
+
 // A room that can contain other rooms
 class ContainerRoom : public AbstractRoom
 {
@@ -40,12 +56,9 @@ public:
     /// @return connector id if succeded, ERROR otherwise
     int addConnector(const QString &lineTag, const qreal &lineFraction);
 
-    void removeEmptyConnector(
-            const int id,
-            const QString &lineTag,
-            const qreal &lineFraction);
+    void removeEmptyConnector(const int id);
 
-    void addRoomsToConnectors(const QVector<AbstractRoom*>& rooms);
+    void fillConnectorsWithRooms(const QVector<AbstractRoom*>& rooms);
 
     void reattachChildren();
 
@@ -56,6 +69,8 @@ public:
             const QPointF &p1,
             const QPointF &p2,
             QGraphicsItem *parent);
+
+    virtual void detach();
 
     int addRoom(
             const QString &lineTag,
@@ -79,7 +94,8 @@ protected:
     QMap<int, ConnectorState> _connectorStates;
     QHash<int, AbstractRoom *> _attachedRooms;
     QHash<int, Connector *> _connectors;
-    QHash<QString, QMap<qreal, Connector*> > _connectorsPos;
+    QHash<QString, QMap<qreal, Connector*> > _connectorsPosOnLine;
+    QHash<int, ContainerPositionStruct> _connectorPosById;
 
     /// <id_room> <id_connector> means that room is connected
     /// to the connector with corresponding ids.

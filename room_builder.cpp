@@ -2,12 +2,13 @@
 #include "room_simple.h"
 #include "corridor_simple.h"
 #include "corridor_random.h"
+#include <QTime>
 
-RoomBuilder::RoomBuilder()
-{
+RoomBuilder::RoomBuilder() {
 }
 
-AbstractRoom* RoomBuilder::buildNewRoom(const RoomType type, const bool dominant)
+AbstractRoom* RoomBuilder::buildNewRoom(const RoomType type,
+                                        int numOfRandomCorridors)
 {
     switch (type) {
     case SIMPLE_ROOM:
@@ -15,7 +16,10 @@ AbstractRoom* RoomBuilder::buildNewRoom(const RoomType type, const bool dominant
     case SIMPLE_CORRIDOR:
         return new SimpleCorridor(500);
     case RANDOM_CORRIDOR:
-        return new RandomCorridor(500, 100, dominant);
+        if (++numOfRandomCorridors > MAX_ALLOWED_RAND_CORRIDORS) {
+            return new SimpleRoom();
+        }
+        return new RandomCorridor(500, 100, numOfRandomCorridors);
     default:
         return NULL;
     }

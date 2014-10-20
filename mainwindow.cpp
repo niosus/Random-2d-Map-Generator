@@ -6,6 +6,7 @@
 #include "corridor_random.h"
 #include "room_builder.h"
 #include <QDebug>
+#include <QTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setOptimizationFlags(QGraphicsView::DontSavePainterState);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    qsrand(QTime::currentTime().msec());
 }
 
 MainWindow::~MainWindow()
@@ -35,7 +37,7 @@ void MainWindow::generate()
     }
     scene->addItem(container);
     container->attach(QPointF(2,2), QPointF(1,1), NULL);
-    scene->invalidate(scene->sceneRect());
+    ui->graphicsView->setScene(scene);
 }
 
 void MainWindow::populateScene()
@@ -54,5 +56,7 @@ void MainWindow::on_btnGenerateRandom_clicked()
         exit(-1);
     }
     scene->clear();
+    scene->update();
+    AbstractRoom::reInitIds();
     generate();
 }

@@ -13,9 +13,12 @@ public:
     };
 
     static AbstractRoom* buildNewRoom(const RoomType type,
-                                      const bool dominant = true);
+                                      int numOfRandomCorridors = true);
 
     RoomBuilder();
+
+private:
+    static const int MAX_ALLOWED_RAND_CORRIDORS = 5;
 };
 
 #endif // ROOM_BUILDER_H

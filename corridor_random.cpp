@@ -4,32 +4,24 @@
 #include <time.h>
 #include <QDebug>
 
-RandomCorridor::RandomCorridor(
-        const qreal &length,
+RandomCorridor::RandomCorridor(const qreal &length,
         const qreal &width,
-        bool dominant)
+        int numOfRandomCorridorsTillNow)
     :SimpleCorridor(length, width)
 {
-    qsrand(time(0));
-    int numRandCorridors = 0;
-    for (int i = 0; i < this->holdingCapacity(); ++i)
-    {
+    int i = 0;
+    while (++i < this->holdingCapacity() / 2) {
         qDebug() << "i: " << i;
         int randType = qrand()%100;
-        qDebug() << "type " << randType;
         RoomBuilder::RoomType type;
-        if (randType < 70)
+        if (randType < 30)
         {
             type = RoomBuilder::SIMPLE_ROOM;
-        } else if (randType < 90) {
+        } else if (randType < 50) {
             type = RoomBuilder::SIMPLE_CORRIDOR;
-        } else if (numRandCorridors++ < 2 && dominant) {
-            type = RoomBuilder::RANDOM_CORRIDOR;
-            dominant = false;
         } else {
-            type = RoomBuilder::SIMPLE_ROOM;
+            type = RoomBuilder::RANDOM_CORRIDOR;
         }
-
         const int randWall = qrand() % 4;
         QString wallType = "";
         switch (randWall)
@@ -47,9 +39,15 @@ RandomCorridor::RandomCorridor(
             wallType = AbstractRoom::WALL_RIGHT;
             break;
         }
-        qDebug() << "wall " << wallType;
 
         qreal frac = qrand() / (qreal) RAND_MAX;
-        this->addRoom(wallType, frac, RoomBuilder::buildNewRoom(type, dominant));
+        int resultCode = this->addRoom(wallType, frac,
+                      RoomBuilder::buildNewRoom(type, numOfRandomCorridorsTillNow));
+
+        // if we failed to add a room, we want to try again
+        if (resultCode == CANNOT_ADD_ROOM ||
+                resultCode == CANNOT_ADD_CONNECTOR) {
+            i--;
+        }
     }
 }

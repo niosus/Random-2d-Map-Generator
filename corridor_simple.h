@@ -20,6 +20,8 @@ public:
     }
 
 protected:
+    const int IMPORTANCE_WEIGHT = 2;
+
     // a function to update the shape to be drawn by paint()
     virtual void updateCurrentShape();
 

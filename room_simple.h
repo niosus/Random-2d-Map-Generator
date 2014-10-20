@@ -18,6 +18,8 @@ public:
             QGraphicsItem *parent);
 
 protected:
+    static const int IMPORTANCE_WEIGHT = 1;
+
     // this function needs to be defined to override the drawn shape
     virtual void updateCurrentShape();
 

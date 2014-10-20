@@ -8,7 +8,11 @@ class RandomCorridor: public SimpleCorridor
 public:
     RandomCorridor(const qreal &length,
                    const qreal &width = UNIFIED_SIZE,
-                   bool dominant = true);
+                   int numOfRandomCorridorsTillNow = 0);
+
+protected:
+
+    const int IMPORTANCE_WEIGHT = 3;
 };
 
 #endif // CORRIDOR_RANDOM_H
