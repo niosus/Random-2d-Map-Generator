@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     room_container.cpp \
     view_maze.cpp \
     room_builder.cpp \
-    corridor_random.cpp
+    corridor_random.cpp \
+    gallery_random.cpp
 
 HEADERS  += mainwindow.h \
     attachable.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     room_container.h \
     view_maze.h \
     room_builder.h \
-    corridor_random.h
+    corridor_random.h \
+    gallery_random.h
 
 test {
     message(Test build)

@@ -154,7 +154,7 @@ void AbstractRoom::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     Q_UNUSED(option);
     QBrush b = painter->brush();
     painter->setBrush(Qt::white);
-    painter->setPen(Qt::NoPen);
+    painter->setPen(Qt::white);
     painter->drawPath(shape());
     painter->setPen(QPen(_color, _penWidth, Qt::SolidLine, Qt::RoundCap));
     for (const QLineF& line: _currentShape)

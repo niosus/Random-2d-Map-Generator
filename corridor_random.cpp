@@ -13,13 +13,13 @@ RandomCorridor::RandomCorridor(const qreal &length,
         qDebug() << "i: " << i;
         int randType = qrand()%100;
         RoomBuilder::RoomType type;
-        if (randType < 30)
+        if (randType < 50)
         {
-            type = RoomBuilder::SIMPLE_ROOM;
-        } else if (randType < 50) {
+            type = RoomBuilder::RANDOM_CORRIDOR;
+        } else if (randType < 60) {
             type = RoomBuilder::SIMPLE_CORRIDOR;
         } else {
-            type = RoomBuilder::RANDOM_CORRIDOR;
+            type = RoomBuilder::SIMPLE_ROOM;
         }
         const int randWall = qrand() % 4;
         QString wallType = "";

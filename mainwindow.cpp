@@ -29,7 +29,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::generate()
 {
-    AbstractRoom* room = RoomBuilder::buildNewRoom(RoomBuilder::RANDOM_CORRIDOR);
+    AbstractRoom* room = RoomBuilder::buildNewRoom(RoomBuilder::RANDOM_GALLERY);
     ContainerRoom* container = dynamic_cast<ContainerRoom *>(room);
     if (!container)
     {
